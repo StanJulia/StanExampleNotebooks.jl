@@ -6,5 +6,5 @@ Stan = "682df890-35be-576f-97d0-3d8c8b33a550"
 
 [compat]
 DrWatson = "2.12.1"
-Stam = "10.2"
+Stan = "10.2"
 julia = "1.10.0"

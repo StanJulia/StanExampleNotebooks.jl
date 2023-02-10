@@ -1,28 +1,17 @@
-# StanNotebookExamples
+#### README for the Pluto notebooks in StanNotebookExamples.jl.
 
-This code base is using the [Julia Language](https://julialang.org/) and
-[DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
-to make a reproducible scientific project named
-> StanNotebookExamples
+Running these notebooks requires a Julia installation with only the packages `Pkg` and `Pluto` installed.
+The example scripts requires a working `cmdstan` installation. See [here]().
 
-To (locally) reproduce this project, do the following:
-
-0. Download this code base. Notice that raw data are typically not included in the
-   git-history and may need to be downloaded independently.
-1. Open a Julia console and do:
-   ```
-   julia> using Pkg
-   julia> Pkg.add("DrWatson") # install globally, for using `quickactivate`
-   julia> Pkg.activate("path/to/this/project")
-   julia> Pkg.instantiate()
-   ```
-
-This will install all necessary packages for you to be able to run the scripts and
-everything should work out of the box, including correctly finding local paths.
-
-You may notice that most scripts start with the commands:
-```julia
-using DrWatson
-@quickactivate "StanNotebookExamples"
+Change to this directory and start Pluto:
 ```
-which auto-activate the project and enable local path handling from DrWatson.
+cd "this directory"
+julia
+
+julia> using Pluto
+julia> Pluto.run()   # A page should open up in your default browser
+```
+
+Select a notebook in Pluto "Open a notebook" box, e.g. type "./".
+
+See [this](https://github.com/fonsp/Pluto.jl/) page for more details.
