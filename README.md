@@ -1,7 +1,7 @@
 #### README for the Pluto notebooks in StanNotebookExamples.jl.
 
 Running these notebooks requires a Julia installation with only the packages `Pkg` and `Pluto` installed.
-The example scripts requires a working `cmdstan` installation. See [here]().
+The example scripts requires a working `cmdstan` installation. See [here](https://github.com/StanJulia/StanSample.jl/blob/master/README.md).
 
 Change to this directory and start Pluto:
 ```
