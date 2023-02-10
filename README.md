@@ -6,7 +6,7 @@ All example notebooks require a working `cmdstan` installation. See [here](https
 
 To (locally) reproduce and use this project, do the following:
 
-1. Download this [project](https://github.com/StatisticalRethinkingJulia/SR2StanPluto.jl) from Github and move to the downloaded directory, e.g.:
+1. Download this [project](https://github.com/StanJulia/StanExampleNotebooks.jl) from Github and move to the downloaded directory, e.g.:
 
 ```
 $ cd .julia/dev
