@@ -35,14 +35,14 @@ notebook_files = [
     "~/.julia/dev/StanNotebookExamples/notebooks/InferenceObjects/InferenceObjects.jl",
     "~/.julia/dev/StanNotebookExamples/notebooks/Logging/ShowLogging.jl",
     "~/.julia/dev/StanNotebookExamples/notebooks/PosteriorDB/PosteriorDB.jl",
-    "~/.julia/dev/StanNotebookExamples/notebooks/Stan-introductory-notebooks/intro-stan-00s.jl",
+    "~/.julia/dev/StanNotebookExamples/notebooks/Stan-intros/intro-stan-00s.jl",
     "~/.julia/dev/StanNotebookExamples/notebooks/Stan-intros/intro-stan-01s.jl",
     "~/.julia/dev/StanNotebookExamples/notebooks/Stan-intros/intro-stan-02s.jl",
     "~/.julia/dev/StanNotebookExamples/notebooks/Stan-intros/intro-stan-chains.jl",
     "~/.julia/dev/StanNotebookExamples/notebooks/Stan-intros/intro-stan-logpdf.jl",
     "~/.julia/dev/StanNotebookExamples/notebooks/Stan-intros/intro-stan-optimize.jl",
     "~/.julia/dev/StanNotebookExamples/notebooks/Stan-intros/intro-stan-priors.jl",
-	"~/.julia/dev/StanNotebookExamples/Maintenance/Notebook-to-reset-Stan-jl-notebooks.jl"
+	"~/.julia/dev/StanNotebookExamples/notebooks/Maintenance/Notebook-to-reset-Stan-jl-notebooks.jl"
 ];
 
 # ╔═╡ 0f10a758-e442-4cd8-88bc-d82d8de97ede
