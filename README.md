@@ -1,17 +1,31 @@
 #### README for the Pluto notebooks in StanNotebookExamples.jl.
 
-Running these notebooks requires a Julia installation with only the packages `Pkg` and `Pluto` installed.
-The example scripts requires a working `cmdstan` installation. See [here](https://github.com/StanJulia/StanSample.jl/blob/master/README.md).
+All example notebooks require a working `cmdstan` installation. See [here](https://github.com/StanJulia/StanSample.jl/blob/master/README.md).
 
-Change to this directory and start Pluto:
+## Usage
+
+To (locally) reproduce and use this project, do the following:
+
+1. Download this [project](https://github.com/StatisticalRethinkingJulia/SR2StanPluto.jl) from Github and move to the downloaded directory, e.g.:
+
 ```
-cd "this directory"
-julia
+$ cd .julia/dev
+$ git clone https://github.com/StanJulia/StanExampleNotebooks.jl StanExampleNotebooks
+$ cd StanExampleNotebooks
+```
+
+The next step assumes your `basic` Julia environment includes `Pkg` and `Pluto`.
+
+2. Start a Pluto notebook server.
+```
+$ cd notebooks
+$ julia
 
 julia> using Pluto
-julia> Pluto.run()   # A page should open up in your default browser
+julia> Pluto.run()
 ```
 
-Select a notebook in Pluto "Open a notebook" box, e.g. type "./".
+A Pluto page should open in a browser. See [this page](https://www.juliafordatascience.com/first-steps-5-pluto/) for a quick Pluto introduction.
 
-See [this](https://github.com/fonsp/Pluto.jl/) page for more details.
+3. Select a notebook in the `open a file` entry box, e.g. type `./` and select a notebook. 
+
