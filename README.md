@@ -1,4 +1,4 @@
-#### README for the Pluto notebooks in StanNotebookExamples.jl.
+#### README for the Pluto notebooks in StanExampleNotebooks.jl.
 
 All example notebooks require a working `cmdstan` installation. See [here](https://github.com/StanJulia/StanSample.jl/blob/master/README.md).
 

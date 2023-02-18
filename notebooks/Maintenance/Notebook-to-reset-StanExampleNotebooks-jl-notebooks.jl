@@ -42,7 +42,7 @@ notebook_files = [
     "~/.julia/dev/StanExampleNotebooks/notebooks/Stan-intros/intro-stan-logpdf.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/Stan-intros/intro-stan-optimize.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/Stan-intros/intro-stan-priors.jl",
-	"~/.julia/dev/StanExampleNotebooks/notebooks/Maintenance/Notebook-to-reset-Stan-jl-notebooks.jl"
+	"~/.julia/dev/StanExampleNotebooks/notebooks/Maintenance/Notebook-to-reset-StanExampleNotebooks-jl-notebooks.jl"
 ];
 
 # ╔═╡ 0f10a758-e442-4cd8-88bc-d82d8de97ede

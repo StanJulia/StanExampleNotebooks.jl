@@ -12,6 +12,7 @@ begin
 	using CSV, DataFrames
 	using Statistics, Test
 	using DimensionalData
+	using InferenceObjects
 	using StanSample
 end
 
@@ -30,8 +31,8 @@ html"""
 	main {
 		margin: 0 auto;
 		max-width: 2000px;
-    	padding-left: max(160px, 10%);
-    	padding-right: max(160px, 30%);
+    	padding-left: max(30px, 3%);
+    	padding-right: max(160px, 36%);
 	}
 </style>
 """
@@ -138,6 +139,20 @@ if success(rc10_4s)
 	@test mean(ma3, dims=1) ≈ [-0.7 10.9 -1 -1 -0.7 0.2 1.8] atol=0.7
 end
 
+# ╔═╡ 44a8c1ad-3712-4e33-ab1b-f1f7de901e9c
+begin
+	m10_4_2s = SampleModel("m10.4.2s", stan10_4)
+	rc10_4_2 = stan_sample(m10_4_2s; data=data10_4, save_warmup=true)
+end;
+
+# ╔═╡ 7c1929b6-e965-4756-8e6c-3639aeeb8f52
+if success(rc10_4_2)
+	idata = inferencedata(m10_4_2s; include_warmup=true)
+    idata = merge(idata, from_namedtuple(; observed_data = data10_4))
+else
+    @warn "Sampling failed."
+end
+
 # ╔═╡ Cell order:
 # ╟─567821e6-18a9-43ba-a35f-c75cc3146d98
 # ╟─9be99d72-d78e-494a-8d4b-8cafeb9f2f4c
@@ -155,3 +170,5 @@ end
 # ╠═ad36dba7-5934-4510-8ec7-7b9ed8498d1c
 # ╠═02d42039-9510-4dfd-bbe7-7bbaba18445f
 # ╠═81671185-b8e7-4b61-8109-450374d9b348
+# ╠═44a8c1ad-3712-4e33-ab1b-f1f7de901e9c
+# ╠═7c1929b6-e965-4756-8e6c-3639aeeb8f52

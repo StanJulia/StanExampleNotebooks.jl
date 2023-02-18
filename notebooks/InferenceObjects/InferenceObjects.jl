@@ -26,6 +26,9 @@ html"""
 </style>
 """
 
+# ╔═╡ 6730545f-4774-4fb2-8c22-aec8c6835610
+#Pkg.activate(expanduser("~/.julia/dev/StanExampleNotebooks"))
+
 # ╔═╡ 8579afa5-4b67-4b64-9f4a-5de9add5fec4
 stan_schools = """
 data {
@@ -125,6 +128,7 @@ DataFrame(idata.sample_stats)
 # ╔═╡ Cell order:
 # ╠═cecf32d4-6047-11ed-31d9-9514b3067c9c
 # ╠═3a1b3129-e17b-48c5-b7c2-a8caaa55a442
+# ╠═6730545f-4774-4fb2-8c22-aec8c6835610
 # ╠═a92b66bc-4869-4bd1-8a5a-c519df844fcf
 # ╠═8579afa5-4b67-4b64-9f4a-5de9add5fec4
 # ╠═b7291faa-3487-4ed5-ae41-501f83f0bf3c

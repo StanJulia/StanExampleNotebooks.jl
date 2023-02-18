@@ -2,7 +2,7 @@
 
 julia_version = "1.10.0-DEV"
 manifest_format = "2.0"
-project_hash = "a0ce2e74f02c9c37fd4f11058e92bb41ddeb59d6"
+project_hash = "35527d16bfbf3b3bfc314c0273a9d1ec0ee3432f"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -88,9 +88,9 @@ version = "0.4.6"
 
 [[deps.AxisKeys]]
 deps = ["AbstractFFTs", "ChainRulesCore", "CovarianceEstimation", "IntervalSets", "InvertedIndices", "LazyStack", "LinearAlgebra", "NamedDims", "OffsetArrays", "Statistics", "StatsBase", "Tables"]
-git-tree-sha1 = "6551e30b501647e3773d5e77e4e1a69363a2efc4"
+git-tree-sha1 = "f1f6c24c1be95d4baa0880903641fa4a15e06d9c"
 uuid = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
-version = "0.2.11"
+version = "0.2.12"
 
 [[deps.BangBang]]
 deps = ["Compat", "ConstructionBase", "Future", "InitialValues", "LinearAlgebra", "Requires", "Setfield", "Tables", "ZygoteRules"]
@@ -216,10 +216,10 @@ uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
 version = "1.14.0"
 
 [[deps.DataFrames]]
-deps = ["Compat", "DataAPI", "Future", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrettyTables", "Printf", "REPL", "Random", "Reexport", "SnoopPrecompile", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
-git-tree-sha1 = "d4f69885afa5e6149d0cab3818491565cf41446d"
+deps = ["Compat", "DataAPI", "Future", "InlineStrings", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrettyTables", "Printf", "REPL", "Random", "Reexport", "SentinelArrays", "SnoopPrecompile", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
+git-tree-sha1 = "aa51303df86f8626a962fccb878430cdb0a97eee"
 uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-version = "1.4.4"
+version = "1.5.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -267,9 +267,9 @@ version = "1.12.2"
 
 [[deps.DimensionalData]]
 deps = ["Adapt", "ArrayInterfaceCore", "ConstructionBase", "Dates", "Extents", "IntervalSets", "IteratorInterfaceExtensions", "LinearAlgebra", "Random", "RecipesBase", "SparseArrays", "Statistics", "TableTraits", "Tables"]
-git-tree-sha1 = "26be0db874edd89bb8e5172c25097449c9c07a4f"
+git-tree-sha1 = "182e52b397d18bcc7257962a0328d7d40d39a6cc"
 uuid = "0703355e-b756-11e9-17c0-8b28908087d0"
-version = "0.24.1"
+version = "0.24.2"
 
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -389,9 +389,9 @@ version = "0.1.1"
 
 [[deps.InferenceObjects]]
 deps = ["Compat", "Dates", "DimensionalData", "Tables"]
-git-tree-sha1 = "2538880e4b62f5ca2c0a3b70dd1eee185f190cac"
+git-tree-sha1 = "4616daf6d3133f5df4ed7c529bd4eb6734a60506"
 uuid = "b5cf5a8d-e756-4ee3-b014-01d49d192c00"
-version = "0.3.2"
+version = "0.3.4"
 
 [[deps.InitialValues]]
 git-tree-sha1 = "4da0f88e9a39111c2fa3add390ab15f3a44f3ca3"
@@ -543,14 +543,14 @@ version = "2.1.0"
 
 [[deps.LogExpFunctions]]
 deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "680e733c3a0a9cea9e935c8c2184aea6a63fa0b5"
+git-tree-sha1 = "071602a0be5af779066df0d7ef4e14945a010818"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.21"
+version = "0.3.22"
 
     [deps.LogExpFunctions.extensions]
-    ChainRulesCoreExt = "ChainRulesCore"
-    ChangesOfVariablesExt = "ChangesOfVariables"
-    InverseFunctionsExt = "InverseFunctions"
+    LogExpFunctionsChainRulesCoreExt = "ChainRulesCore"
+    LogExpFunctionsChangesOfVariablesExt = "ChangesOfVariables"
+    LogExpFunctionsInverseFunctionsExt = "InverseFunctions"
 
     [deps.LogExpFunctions.weakdeps]
     ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
@@ -637,9 +637,9 @@ version = "2022.10.11"
 
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]
-git-tree-sha1 = "a7c3d1da1189a1c2fe843a3bfa04d18d20eb3211"
+git-tree-sha1 = "0877504529a3e5c3343c6f8b4c0381e57e4387e4"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
-version = "1.0.1"
+version = "1.0.2"
 
 [[deps.NamedArrays]]
 deps = ["Combinatorics", "DataStructures", "DelimitedFiles", "InvertedIndices", "LinearAlgebra", "Random", "Requires", "SparseArrays", "Statistics"]
@@ -708,9 +708,9 @@ version = "0.12.3"
 
 [[deps.Parsers]]
 deps = ["Dates", "SnoopPrecompile"]
-git-tree-sha1 = "18f84637e00b72ba6769034a4b50d79ee40c84a9"
+git-tree-sha1 = "6f4fbcd1ad45905a5dee3f4256fabb49aa2110c6"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.5.5"
+version = "2.5.7"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -890,9 +890,9 @@ version = "0.1.15"
 
 [[deps.Stan]]
 deps = ["AxisKeys", "BridgeStan", "CSV", "CompatHelperLocal", "DataFrames", "DataStructures", "DimensionalData", "Distributions", "DocStringExtensions", "InferenceObjects", "JSON", "JSON3", "MCMCChains", "MonteCarloMeasurements", "NamedArrays", "NamedTupleTools", "PosteriorDB", "Random", "StanBase", "StanDiagnose", "StanOptimize", "StanQuap", "StanSample", "StanVariational", "Statistics", "StatsBase", "StatsFuns", "Tables", "Test"]
-git-tree-sha1 = "ed92e5c65d4c30add26c5a870a303c6fa0197df4"
+git-tree-sha1 = "9c2afc889860daf3c4e7d9237929b9451c793723"
 uuid = "682df890-35be-576f-97d0-3d8c8b33a550"
-version = "10.2.0"
+version = "10.3.0"
 
 [[deps.StanBase]]
 deps = ["CSV", "DataFrames", "DelimitedFiles", "Distributed", "DocStringExtensions", "Documenter", "JSON", "NamedTupleTools", "Parameters", "Random", "Unicode"]
@@ -946,9 +946,9 @@ version = "0.8.3"
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "Random", "StaticArraysCore", "Statistics"]
-git-tree-sha1 = "129703d62117c374c4f2db6d13a027741c46eafd"
+git-tree-sha1 = "67d3e75e8af8089ea34ce96974d5468d4a008ca6"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.5.13"
+version = "1.5.15"
 
 [[deps.StaticArraysCore]]
 git-tree-sha1 = "6b7ba252635a5eff6a0b0664a41ee140a1c9e72a"
