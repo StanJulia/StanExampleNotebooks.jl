@@ -29,6 +29,7 @@ html"""
 notebook_files = [
     "~/.julia/dev/StanExampleNotebooks/notebooks/ARM/Radon/radon.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/BridgeStan/BridgeStan.jl",
+    "~/.julia/dev/StanExampleNotebooks/notebooks/CausalInference/CausalInference.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/DataFrames/Dataframes.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/DataFrames/Nested-DataFrame.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/DimensionalData/dimensionaldata.jl",
