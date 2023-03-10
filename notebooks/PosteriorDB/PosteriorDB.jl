@@ -7,10 +7,14 @@ using InteractiveUtils
 # ╔═╡ 9339e545-32ee-4304-ba49-d34befb45fe3
 using Pkg
 
+# ╔═╡ 6bce28f8-1b8c-4845-bdbc-2a584577a253
+#Pkg.activate(expanduser("~/.julia/dev/Stan"))
+
 # ╔═╡ e4d98ecf-1dd3-414b-ba5c-b6a7d71df3eb
 begin
 	using DataFrames
 	using Statistics
+	using JSON
 	using PosteriorDB
 	using StanSample
 end
@@ -28,70 +32,73 @@ html"""
 """
 
 # ╔═╡ 22ffe9ac-a7d7-4066-a6a0-58e0b60d0352
-pdb = database()
+pdb = PosteriorDB.database()
 
 # ╔═╡ 97fd910a-2972-48f9-a512-e5975b51351f
 pdb.path
 
 # ╔═╡ bdf2a2eb-89df-401f-b113-6ea178d67500
-posterior_names(pdb)
+PosteriorDB.posterior_names(pdb)
 
 # ╔═╡ 5cebec86-cb13-4bf2-850a-3c6510e3fb5e
-dataset_names(pdb)
+PosteriorDB.dataset_names(pdb)
 
 # ╔═╡ 54dd2074-76f0-4bd7-9406-94e9720d0daf
-posterior_pdb = posterior(pdb, "eight_schools-eight_schools_centered")
+posterior_pdb = PosteriorDB.posterior(pdb, "eight_schools-eight_schools_centered")
 
 # ╔═╡ a0260880-429c-4888-a4be-9b1d6457de53
-mod = model(posterior_pdb)
+mod = PosteriorDB.model(posterior_pdb)
 
 # ╔═╡ 829195fc-adab-4f39-a69c-4c5c8d4916db
-info(posterior_pdb)
+PosteriorDB.info(posterior_pdb)
 
 # ╔═╡ 8feb8740-b286-4877-8587-7fde4419f90d
 begin
-	mod_code = implementation(mod, "stan")
+	mod_code = PosteriorDB.implementation(mod, "stan")
 	mod_code
 end
 
 # ╔═╡ 46d29033-58c8-48a0-998e-944ad9d0ee62
-impl = implementation(mod, "stan")
+impl = PosteriorDB.implementation(mod, "stan")
 
 # ╔═╡ 438253a2-5b62-46f9-a85e-8a89e42e1c82
 begin
-	code = load(impl)
+	code = PosteriorDB.load(impl)
 	println(code)
 end
 
 # ╔═╡ 3068fb12-0c37-466d-9721-99f746006f03
-info(mod)
+PosteriorDB.info(mod)
 
 # ╔═╡ 0247e72a-afc8-4072-9fd6-78b4a0e1baf7
-post = dataset(posterior_pdb)
+post = PosteriorDB.dataset(posterior_pdb)
 
 # ╔═╡ e18e0655-1785-47e6-a322-d7e2f84e6f6f
-info(posterior_pdb)
+PosteriorDB.info(posterior_pdb)
 
 # ╔═╡ 302ce3e8-e3c0-4111-8065-71a3b622779f
-path(post)
+PosteriorDB.path(post)
 
 # ╔═╡ a9ba650f-76f3-483e-bc3a-c0ff039e08c8
-data = load(post)
+data = PosteriorDB.load(post)
 
 # ╔═╡ 69c80caa-cc31-4409-9f73-2580e7620fd2
-ref = reference_posterior(posterior_pdb)
+ref = PosteriorDB.reference_posterior(posterior_pdb)
 
 # ╔═╡ 719112ef-f399-4664-8843-16723289bd1d
-info(ref)
+PosteriorDB.info(ref)
 
 # ╔═╡ 9e152cf5-2916-42a5-85cb-2c41e3590c3a
-path(ref)
+PosteriorDB.path(ref)
 
 # ╔═╡ 26030da6-920f-47bd-ad55-29444e78c1c8
-pdb_df = DataFrame(load(ref))
+pdb_df = DataFrame(PosteriorDB.load(ref))
 
 # ╔═╡ 20738a8e-a50d-4682-884b-a84e33e6146a
 pdb_df.mu
+
+# ╔═╡ 280648e7-cdbd-4949-970d-d342333ff149
+data
 
 # ╔═╡ 4ac7fa99-6ba1-46dd-abae-ed0655a71f6f
 begin
@@ -107,6 +114,7 @@ end
 # ╔═╡ Cell order:
 # ╠═34a9e246-547e-11ed-2c8e-5d545ad2b268
 # ╠═9339e545-32ee-4304-ba49-d34befb45fe3
+# ╠═6bce28f8-1b8c-4845-bdbc-2a584577a253
 # ╠═e4d98ecf-1dd3-414b-ba5c-b6a7d71df3eb
 # ╠═22ffe9ac-a7d7-4066-a6a0-58e0b60d0352
 # ╠═97fd910a-2972-48f9-a512-e5975b51351f
@@ -128,5 +136,6 @@ end
 # ╠═9e152cf5-2916-42a5-85cb-2c41e3590c3a
 # ╠═26030da6-920f-47bd-ad55-29444e78c1c8
 # ╠═20738a8e-a50d-4682-884b-a84e33e6146a
+# ╠═280648e7-cdbd-4949-970d-d342333ff149
 # ╠═4ac7fa99-6ba1-46dd-abae-ed0655a71f6f
 # ╠═1e6593dd-956e-40b1-a715-6223fc7c56d8

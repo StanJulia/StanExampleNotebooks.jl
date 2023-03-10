@@ -27,7 +27,7 @@ begin
 	using Test
 	
 	# Graphics related packages
-	using GLMakie
+	using CairoMakie
 	using GraphViz
 	using Graphs
 
@@ -117,13 +117,11 @@ end
 md" ### CausalInference.jl"
 
 # ╔═╡ 6bbfe4cb-f7e1-4503-a386-092882a1a49c
-dag_1 = dag("Dag_1", [(:X, :V), (:X, :W), (:W, :Z), (:V, :Z), (:Z, :S)]; df=df1, covm=covm1);
-
-# ╔═╡ 728aa5ff-d581-43f7-bacf-c04787480bb7
-gvplot(dag_1)
-
-# ╔═╡ 30c7782a-4a56-4971-a14d-bd96104140cf
-dag_1.v
+begin
+	dag_1_dot_repr = "DiGraph Dag_1 {X -> V; X -> W; W -> Z; V -> Z; Z -> S;}"
+	dag_1 = create_dag("Dag_1", df1; g_dot_repr=dag_1_dot_repr)
+	gvplot(dag_1)
+end
 
 # ╔═╡ a0cc8175-4f83-45f8-8bba-3e0679ff4ccb
 dseparation(dag_1, :X, :V)
@@ -139,24 +137,6 @@ dseparation(dag_1, :X, :Z, [:V, :W], verbose=true)
 
 # ╔═╡ d94d4717-7ca8-4db9-ae54-fc481aa63c3c
 @time est_dag_1_g = pcalg(df1, p, gausscitest)
-
-# ╔═╡ 603619ac-3714-46ab-8106-cceacb2dc11c
-est_dag_1 = dag("est_dag_1", est_dag_1_g, dag_1);
-
-# ╔═╡ e955f2f6-91c5-476e-9aae-96163de036e4
-gvplot(est_dag_1)
-
-# ╔═╡ 240e4e7b-b90f-4dd8-9862-e3cf4876ab98
-est_dag_1.covm
-
-# ╔═╡ daa82ef0-fd80-4ece-ba12-93a47a30a176
-@time est_g_1_2 = pcalg(df1, p, cmitest)
-
-# ╔═╡ f3007639-619a-4153-bbb2-7699e08a8c1e
-est_dag_1_2 = dag("est_dag_1", est_g_1_2, dag_1);
-
-# ╔═╡ 0d49b778-1df2-47cf-add2-4bebd2ef6bc8
-gvplot((est_dag_1_2))
 
 # ╔═╡ 655261b4-5b53-4b3f-952e-6c2b09dea2be
 md" ##### Play around with the estimated graph when varying X -> W."
@@ -202,13 +182,9 @@ let
 end;
 
 # ╔═╡ 810fde77-991d-495a-9966-50c1a7abc685
-dag_4 = dag("Dag_4", [(:X, :V), (:X, :W), (:W, :Z), (:V, :Z), (:Z, :S)]; df=df4, covm=covm4);
-
-# ╔═╡ 124d0947-1a6f-4e01-aa6f-a96098720cb5
 begin
-	@time est_dag_4_g = pcalg(df4, p, gausscitest)
-	est_dag_4 = dag("est_dag_2", est_dag_4_g, dag_1)
-	gvplot(est_dag_4)
+	dag_4 = create_dag("Dag_4", df4; g_dot_repr=dag_1_dot_repr)
+	gvplot(dag_4)
 end
 
 # ╔═╡ 75a21a67-dfb6-4fba-b356-f611c403adab
@@ -253,26 +229,6 @@ if success(rc5_5_1s) && success(rc5_5_2s) && success(rc5_5_3s)
 	f1
 end
 
-# ╔═╡ 9105868e-8a7c-457e-8760-ab5cfcb62955
-levels = length([m5_5_1s, m5_5_2s, m5_5_3s]) * (length([:a, :bV, :bW]) + 1)
-
-# ╔═╡ 307076f5-fd19-41af-84b3-054609060d9d
-gvplot(est_dag_1)
-
-# ╔═╡ ea512f88-d6dd-4e96-8716-f8b9ee017152
-begin
-	@time est_dag_2_g = pcalg(df2, p, gausscitest)
-	est_dag_2 = dag("est_dag_2", est_dag_2_g, dag_1)
-	gvplot(est_dag_2)
-end
-
-# ╔═╡ 7d74e01c-dcdc-4fc3-bc18-06563ffc7573
-begin
-	@time est_dag_3_g = pcalg(df3, p, gausscitest)
-	est_dag_3 = dag("est_dag_3", est_dag_3_g, dag_1)
-	gvplot(est_dag_3)
-end
-
 # ╔═╡ Cell order:
 # ╠═e4552c81-d0db-4434-b81a-c86f1af515e5
 # ╠═62c80a26-975a-11ed-2e09-2dce0e33bb70
@@ -283,32 +239,19 @@ end
 # ╠═1fa40de3-9423-43af-ae3c-78f89f9897bb
 # ╟─ad08dd09-222a-4071-92d4-38deebaf2e82
 # ╠═6bbfe4cb-f7e1-4503-a386-092882a1a49c
-# ╠═728aa5ff-d581-43f7-bacf-c04787480bb7
-# ╠═30c7782a-4a56-4971-a14d-bd96104140cf
 # ╠═a0cc8175-4f83-45f8-8bba-3e0679ff4ccb
 # ╠═00ad74d9-62d8-4ced-8bf1-eace47470272
 # ╠═5533711c-6cbb-4407-8081-1ab44a09a8b9
 # ╠═6d999053-3612-4e8d-b2f2-2ddf3eae5630
 # ╠═d94d4717-7ca8-4db9-ae54-fc481aa63c3c
-# ╠═603619ac-3714-46ab-8106-cceacb2dc11c
-# ╠═e955f2f6-91c5-476e-9aae-96163de036e4
-# ╠═240e4e7b-b90f-4dd8-9862-e3cf4876ab98
-# ╠═daa82ef0-fd80-4ece-ba12-93a47a30a176
-# ╠═f3007639-619a-4153-bbb2-7699e08a8c1e
-# ╠═0d49b778-1df2-47cf-add2-4bebd2ef6bc8
 # ╟─655261b4-5b53-4b3f-952e-6c2b09dea2be
 # ╠═ad72f618-c6b4-403c-926e-31dbab1c2c1c
 # ╠═417e1430-7593-4755-abdc-69ba7059a3db
 # ╠═d0da3670-1e10-4cd7-bef7-cfa185572359
 # ╠═810fde77-991d-495a-9966-50c1a7abc685
-# ╠═124d0947-1a6f-4e01-aa6f-a96098720cb5
 # ╟─fad832c7-ec30-4382-9555-cd1ddfd6a909
 # ╠═8c7df65a-88fe-47ba-8ed5-39f469ade8aa
 # ╠═75a21a67-dfb6-4fba-b356-f611c403adab
 # ╠═46aebc7b-2b2e-4254-af16-73ee2512ad5f
 # ╠═5bb2fec8-b915-4aff-855b-0a3d325de66b
 # ╠═6de18959-babc-4f56-af02-595a7cc7fdc6
-# ╠═9105868e-8a7c-457e-8760-ab5cfcb62955
-# ╠═307076f5-fd19-41af-84b3-054609060d9d
-# ╠═ea512f88-d6dd-4e96-8716-f8b9ee017152
-# ╠═7d74e01c-dcdc-4fc3-bc18-06563ffc7573
