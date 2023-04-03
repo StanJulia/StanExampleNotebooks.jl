@@ -18,7 +18,7 @@ end
 using Pkg
 
 # ╔═╡ aaea31c8-37ed-4f0f-8e3e-8e89d30ed918
-#Pkg.activate(expanduser("~/.julia/dev/SR2StanPluto"))
+Pkg.activate(expanduser("~/.julia/dev/SR2StanPluto"))
 
 # ╔═╡ 58ece6dd-a20f-4624-898a-40cae4b471e4
 begin
@@ -118,22 +118,37 @@ md" ### CausalInference.jl"
 
 # ╔═╡ 6bbfe4cb-f7e1-4503-a386-092882a1a49c
 begin
-	dag_1_dot_repr = "DiGraph Dag_1 {X -> V; X -> W; W -> Z; V -> Z; Z -> S;}"
+	dag_1_dot_repr = "DiGraph Dag_1 {x -> v; x -> w; w -> z; v -> z; z -> s;}"
 	dag_1 = create_dag("Dag_1", df1; g_dot_repr=dag_1_dot_repr)
 	gvplot(dag_1)
 end
 
+# ╔═╡ 2e52ff5a-41de-4cca-918c-f1c9b2be9e2e
+dag_1.vars
+
+# ╔═╡ 49bb18f3-d914-4600-9750-6a0478712851
+dag_1.g
+
+# ╔═╡ f6edfa9e-6405-4fcf-a2bc-e05f88acff9d
+dag_1.est_vars
+
+# ╔═╡ b71c9a06-2ecd-40f3-95f7-948a73290d40
+dag_1.est_g
+
+# ╔═╡ d0360ab1-afea-41a6-95ca-a43468d632ce
+dag_1.est_g_dot_repr
+
 # ╔═╡ a0cc8175-4f83-45f8-8bba-3e0679ff4ccb
-dseparation(dag_1, :X, :V)
+dseparation(dag_1, :x, :v)
 
 # ╔═╡ 00ad74d9-62d8-4ced-8bf1-eace47470272
-dseparation(dag_1, :X, :Z, [:W], verbose=true)
+dseparation(dag_1, :x, :z, [:w], verbose=true)
 
 # ╔═╡ 5533711c-6cbb-4407-8081-1ab44a09a8b9
-dseparation(dag_1, :X, :Z, [:V], verbose=true)
+dseparation(dag_1, :x, :z, [:v], verbose=true)
 
 # ╔═╡ 6d999053-3612-4e8d-b2f2-2ddf3eae5630
-dseparation(dag_1, :X, :Z, [:V, :W], verbose=true)
+dseparation(dag_1, :x, :z, [:v, :w], verbose=true)
 
 # ╔═╡ d94d4717-7ca8-4db9-ae54-fc481aa63c3c
 @time est_dag_1_g = pcalg(df1, p, gausscitest)
@@ -239,6 +254,11 @@ end
 # ╠═1fa40de3-9423-43af-ae3c-78f89f9897bb
 # ╟─ad08dd09-222a-4071-92d4-38deebaf2e82
 # ╠═6bbfe4cb-f7e1-4503-a386-092882a1a49c
+# ╠═2e52ff5a-41de-4cca-918c-f1c9b2be9e2e
+# ╠═49bb18f3-d914-4600-9750-6a0478712851
+# ╠═f6edfa9e-6405-4fcf-a2bc-e05f88acff9d
+# ╠═b71c9a06-2ecd-40f3-95f7-948a73290d40
+# ╠═d0360ab1-afea-41a6-95ca-a43468d632ce
 # ╠═a0cc8175-4f83-45f8-8bba-3e0679ff4ccb
 # ╠═00ad74d9-62d8-4ced-8bf1-eace47470272
 # ╠═5533711c-6cbb-4407-8081-1ab44a09a8b9
