@@ -1,18 +1,8 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
-
-# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
-macro bind(def, element)
-    quote
-        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
-        local el = $(esc(element))
-        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
-        el
-    end
-end
 
 # ╔═╡ 62c80a26-975a-11ed-2e09-2dce0e33bb70
 using Pkg
@@ -23,7 +13,6 @@ using Pkg
 # ╔═╡ 58ece6dd-a20f-4624-898a-40cae4b471e4
 begin
 	# General packages for this script
-	using PlutoUI
 	using Test
 	
 	# Graphics related packages
@@ -118,8 +107,8 @@ md" ### CausalInference.jl"
 
 # ╔═╡ 6bbfe4cb-f7e1-4503-a386-092882a1a49c
 begin
-	dag_1_dot_repr = "DiGraph Dag_1 {x -> v; x -> w; w -> z; v -> z; z -> s;}"
-	dag_1 = create_dag("Dag_1", df1; g_dot_repr=dag_1_dot_repr)
+	dag_1_dot_str = "DiGraph Dag_1 {x -> v; x -> w; w -> z; v -> z; z -> s;}"
+	dag_1 = create_dag("Dag_1", df1; g_dot_str=dag_1_dot_str)
 	gvplot(dag_1)
 end
 
@@ -136,31 +125,59 @@ dag_1.est_vars
 dag_1.est_g
 
 # ╔═╡ d0360ab1-afea-41a6-95ca-a43468d632ce
-dag_1.est_g_dot_repr
+dag_1.est_g_dot_str
 
 # ╔═╡ a0cc8175-4f83-45f8-8bba-3e0679ff4ccb
-dseparation(dag_1, :x, :v)
+dsep(dag_1, :x, :v)
 
 # ╔═╡ 00ad74d9-62d8-4ced-8bf1-eace47470272
-dseparation(dag_1, :x, :z, [:w], verbose=true)
+dsep(dag_1, :x, :z, [:w], verbose=true)
 
 # ╔═╡ 5533711c-6cbb-4407-8081-1ab44a09a8b9
-dseparation(dag_1, :x, :z, [:v], verbose=true)
+dsep(dag_1, :x, :z, [:v], verbose=true)
 
 # ╔═╡ 6d999053-3612-4e8d-b2f2-2ddf3eae5630
-dseparation(dag_1, :x, :z, [:v, :w], verbose=true)
+dsep(dag_1, :x, :z, [:v, :w], verbose=true)
 
 # ╔═╡ d94d4717-7ca8-4db9-ae54-fc481aa63c3c
 @time est_dag_1_g = pcalg(df1, p, gausscitest)
 
-# ╔═╡ 655261b4-5b53-4b3f-952e-6c2b09dea2be
-md" ##### Play around with the estimated graph when varying X -> W."
+# ╔═╡ e250a4cc-65a5-4c86-bffb-987f664f12c8
+md" ##### Compare with FCI algorithm results."
 
-# ╔═╡ ad72f618-c6b4-403c-926e-31dbab1c2c1c
-@bind bXW PlutoUI.Slider(0:100; default=25)
+# ╔═╡ c78f95b1-5015-4ae6-ba21-8bea7a7b8772
+g_oracle = fcialg(5, dseporacle, dag_1.g)
 
-# ╔═╡ 417e1430-7593-4755-abdc-69ba7059a3db
-bXW
+# ╔═╡ c60bb1fb-3f0f-4ee6-884b-994f994788b0
+g_gauss = fcialg(dag_1.df, 0.05, gausscitest)
+
+# ╔═╡ 0db37602-6997-474a-8cc1-0b3bc8a6fb40
+let
+    fci_oracle_dot_str = to_gv(g_oracle, dag_1.vars)
+    fci_gauss_dot_str = to_gv(g_gauss, dag_1.vars)
+    g1 = GraphViz.Graph(dag_1.g_dot_str)
+    g2 = GraphViz.Graph(dag_1.est_g_dot_str)
+    g3 = GraphViz.Graph(fci_oracle_dot_str)
+    g4 = GraphViz.Graph(fci_gauss_dot_str)
+    f = Figure(resolution=default_figure_resolution)
+    ax = Axis(f[1, 1]; aspect=DataAspect(), title="True (generational) DAG")
+    CairoMakie.image!(rotr90(create_png_image(g1)))
+    hidedecorations!(ax)
+    hidespines!(ax)
+    ax = Axis(f[1, 2]; aspect=DataAspect(), title="PC estimated DAG")
+    CairoMakie.image!(rotr90(create_png_image(g2)))
+    hidedecorations!(ax)
+    hidespines!(ax)
+    ax = Axis(f[2, 1]; aspect=DataAspect(), title="FCI oracle estimated DAG")
+    CairoMakie.image!(rotr90(create_png_image(g3)))
+    hidedecorations!(ax)
+    hidespines!(ax)
+    ax = Axis(f[2, 2]; aspect=DataAspect(), title="FCI gauss estimated DAG")
+    CairoMakie.image!(rotr90(create_png_image(g4)))
+    hidedecorations!(ax)
+    hidespines!(ax)
+    f
+end
 
 # ╔═╡ fad832c7-ec30-4382-9555-cd1ddfd6a909
 md" ##### Play around with the effect of varying the strength of Z -> W."
@@ -180,26 +197,6 @@ let
 	global df2 = DataFrame(x=x, v=v, w=w, z=z, s=s)
 	global covm2 = NamedArray(cov(Array(df2)), (names(df2), names(df2)), ("Rows", "Cols"))
 	df2
-end
-
-# ╔═╡ d0da3670-1e10-4cd7-bef7-cfa185572359
-let
-	Random.seed!(123)
-	N = 1000
-	x = rand(N)
-	v = x + rand(N) * 0.25
-	w = x * bXW * 0.01 + rand(N) * 0.25
-	z = v + w + rand(N) * 0.25
-	s = z + rand(N) * 0.25
-	global X4 = [x v w z s]
-	global df4 = DataFrame(x=x, v=v, w=w, z=z, s=s)
-	global covm4 = NamedArray(cov(Array(df2)), (names(df2), names(df2)), ("Rows", "Cols"))
-end;
-
-# ╔═╡ 810fde77-991d-495a-9966-50c1a7abc685
-begin
-	dag_4 = create_dag("Dag_4", df4; g_dot_repr=dag_1_dot_repr)
-	gvplot(dag_4)
 end
 
 # ╔═╡ 75a21a67-dfb6-4fba-b356-f611c403adab
@@ -264,11 +261,10 @@ end
 # ╠═5533711c-6cbb-4407-8081-1ab44a09a8b9
 # ╠═6d999053-3612-4e8d-b2f2-2ddf3eae5630
 # ╠═d94d4717-7ca8-4db9-ae54-fc481aa63c3c
-# ╟─655261b4-5b53-4b3f-952e-6c2b09dea2be
-# ╠═ad72f618-c6b4-403c-926e-31dbab1c2c1c
-# ╠═417e1430-7593-4755-abdc-69ba7059a3db
-# ╠═d0da3670-1e10-4cd7-bef7-cfa185572359
-# ╠═810fde77-991d-495a-9966-50c1a7abc685
+# ╟─e250a4cc-65a5-4c86-bffb-987f664f12c8
+# ╠═c78f95b1-5015-4ae6-ba21-8bea7a7b8772
+# ╠═c60bb1fb-3f0f-4ee6-884b-994f994788b0
+# ╠═0db37602-6997-474a-8cc1-0b3bc8a6fb40
 # ╟─fad832c7-ec30-4382-9555-cd1ddfd6a909
 # ╠═8c7df65a-88fe-47ba-8ed5-39f469ade8aa
 # ╠═75a21a67-dfb6-4fba-b356-f611c403adab
