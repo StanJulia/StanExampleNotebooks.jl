@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
@@ -16,7 +16,7 @@ begin
     using StanSample
 	
 	# Graphics related
-    using GLMakie
+    using CairoMakie
 		
 	# Include project support packages
 	using RegressionAndOtherStories

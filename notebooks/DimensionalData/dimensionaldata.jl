@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
@@ -36,7 +36,6 @@ html"""
 	}
 </style>
 """
-
 
 # ╔═╡ 05d79a9b-8506-40a4-8a5f-16bf9956f7f5
 pkgdir(StanSample)

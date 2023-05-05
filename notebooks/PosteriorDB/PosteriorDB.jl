@@ -1,14 +1,11 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 9339e545-32ee-4304-ba49-d34befb45fe3
 using Pkg
-
-# ╔═╡ 6bce28f8-1b8c-4845-bdbc-2a584577a253
-#Pkg.activate(expanduser("~/.julia/dev/Stan"))
 
 # ╔═╡ e4d98ecf-1dd3-414b-ba5c-b6a7d71df3eb
 begin
@@ -30,6 +27,9 @@ html"""
 	}
 </style>
 """
+
+# ╔═╡ 6bce28f8-1b8c-4845-bdbc-2a584577a253
+#Pkg.activate(expanduser("~/.julia/dev/Stan"))
 
 # ╔═╡ 22ffe9ac-a7d7-4066-a6a0-58e0b60d0352
 pdb = PosteriorDB.database()

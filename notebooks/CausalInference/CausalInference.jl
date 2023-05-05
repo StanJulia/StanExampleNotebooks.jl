@@ -7,9 +7,6 @@ using InteractiveUtils
 # ╔═╡ 62c80a26-975a-11ed-2e09-2dce0e33bb70
 using Pkg
 
-# ╔═╡ aaea31c8-37ed-4f0f-8e3e-8e89d30ed918
-#Pkg.activate(expanduser("~/.julia/dev/SR2StanPluto"))
-
 # ╔═╡ 58ece6dd-a20f-4624-898a-40cae4b471e4
 begin
 	# General packages for this script
@@ -42,6 +39,9 @@ html"""
 	}
 </style>
 """
+
+# ╔═╡ aaea31c8-37ed-4f0f-8e3e-8e89d30ed918
+#Pkg.activate(expanduser("~/.julia/dev/SR2StanPluto"))
 
 # ╔═╡ 261cca70-a6dd-4bed-b2f2-8667534d0ceb
 let

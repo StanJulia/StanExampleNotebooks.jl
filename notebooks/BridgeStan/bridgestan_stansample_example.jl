@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
@@ -73,10 +73,12 @@ begin
 	    stanc_args=["--warn-pedantic --O1"],
     	make_args=["CXX=clang++", "STAN_THREADS=true"],
 		data = joinpath(pwd(), "bernoulli_data_$(chain_id).json"),
-        seed = 204,
-        chain_id = chain_id
+        seed = 204
     )
 end;
+
+# ╔═╡ 28f3e693-fbe0-4cc1-af2c-65e3b6cef254
+pwd()
 
 # ╔═╡ 0f43e4c5-6c4b-4a2b-bcf3-fee8862b28fd
 md" ###### Model name:"
@@ -146,6 +148,7 @@ smb
 # ╠═acccac71-e62d-4a1d-8fb4-ebb379ee572d
 # ╟─77321ebd-fe28-4e97-a81f-c59d9906f096
 # ╠═b3d88396-fcb9-44ed-8e6a-16030c9d4f36
+# ╠═28f3e693-fbe0-4cc1-af2c-65e3b6cef254
 # ╟─0f43e4c5-6c4b-4a2b-bcf3-fee8862b28fd
 # ╠═4023e439-8af1-46e7-b484-24544c7dda8f
 # ╟─04f05b74-9b3e-4c49-b752-e6260eac1096
