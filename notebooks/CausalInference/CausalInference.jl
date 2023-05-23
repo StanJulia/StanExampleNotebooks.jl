@@ -1,11 +1,14 @@
 ### A Pluto.jl notebook ###
-# v0.19.25
+# v0.19.26
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 62c80a26-975a-11ed-2e09-2dce0e33bb70
 using Pkg
+
+# ╔═╡ aaea31c8-37ed-4f0f-8e3e-8e89d30ed918
+#Pkg.activate(expanduser("~/.julia/dev/SR2StanPluto"))
 
 # ╔═╡ 58ece6dd-a20f-4624-898a-40cae4b471e4
 begin
@@ -14,10 +17,9 @@ begin
 	
 	# Graphics related packages
 	using CairoMakie
-	using GraphViz
-	using Graphs
 
 	# DAG support
+	using GraphViz
 	using CausalInference
 
 	# Stan specific
@@ -39,9 +41,6 @@ html"""
 	}
 </style>
 """
-
-# ╔═╡ aaea31c8-37ed-4f0f-8e3e-8e89d30ed918
-#Pkg.activate(expanduser("~/.julia/dev/SR2StanPluto"))
 
 # ╔═╡ 261cca70-a6dd-4bed-b2f2-8667534d0ceb
 let
@@ -108,36 +107,42 @@ md" ### CausalInference.jl"
 # ╔═╡ 6bbfe4cb-f7e1-4503-a386-092882a1a49c
 begin
 	dag_1_dot_str = "DiGraph Dag_1 {x -> v; x -> w; w -> z; v -> z; z -> s;}"
-	dag_1 = create_dag("Dag_1", df1; g_dot_str=dag_1_dot_str)
-	gvplot(dag_1)
+	dag_1_fci = create_fci_dag("Dag_1", df1, dag_1_dot_str)
+	gvplot(dag_1_fci)
+end
+
+# ╔═╡ 5cd68086-a5e2-4ff1-a02b-1385b4e538d6
+begin
+	dag_1_pc = create_pc_dag("Dag_1", df1, dag_1_dot_str)
+	gvplot(dag_1_pc)
 end
 
 # ╔═╡ 2e52ff5a-41de-4cca-918c-f1c9b2be9e2e
-dag_1.vars
+dag_1_fci.vars
 
 # ╔═╡ 49bb18f3-d914-4600-9750-6a0478712851
-dag_1.g
-
-# ╔═╡ f6edfa9e-6405-4fcf-a2bc-e05f88acff9d
-dag_1.est_vars
+dag_1_fci.g
 
 # ╔═╡ b71c9a06-2ecd-40f3-95f7-948a73290d40
-dag_1.est_g
+dag_1_fci.est_g
 
 # ╔═╡ d0360ab1-afea-41a6-95ca-a43468d632ce
-dag_1.est_g_dot_str
+dag_1_fci.est_g_dot_str
 
 # ╔═╡ a0cc8175-4f83-45f8-8bba-3e0679ff4ccb
-dsep(dag_1, :x, :v)
+dsep(dag_1_fci, :x, :v)
+
+# ╔═╡ e7b38d4b-7dec-4d58-b712-e09b894d9418
+dsep(dag_1_pc, :x, :v)
 
 # ╔═╡ 00ad74d9-62d8-4ced-8bf1-eace47470272
-dsep(dag_1, :x, :z, [:w], verbose=true)
+dsep(dag_1_fci, :x, :z, [:w], verbose=true)
 
 # ╔═╡ 5533711c-6cbb-4407-8081-1ab44a09a8b9
-dsep(dag_1, :x, :z, [:v], verbose=true)
+dsep(dag_1_fci, :x, :z, [:v], verbose=true)
 
 # ╔═╡ 6d999053-3612-4e8d-b2f2-2ddf3eae5630
-dsep(dag_1, :x, :z, [:v, :w], verbose=true)
+dsep(dag_1_fci, :x, :z, [:v, :w], verbose=true)
 
 # ╔═╡ d94d4717-7ca8-4db9-ae54-fc481aa63c3c
 @time est_dag_1_g = pcalg(df1, p, gausscitest)
@@ -145,39 +150,8 @@ dsep(dag_1, :x, :z, [:v, :w], verbose=true)
 # ╔═╡ e250a4cc-65a5-4c86-bffb-987f664f12c8
 md" ##### Compare with FCI algorithm results."
 
-# ╔═╡ c78f95b1-5015-4ae6-ba21-8bea7a7b8772
-g_oracle = fcialg(5, dseporacle, dag_1.g)
-
 # ╔═╡ c60bb1fb-3f0f-4ee6-884b-994f994788b0
-g_gauss = fcialg(dag_1.df, 0.05, gausscitest)
-
-# ╔═╡ 0db37602-6997-474a-8cc1-0b3bc8a6fb40
-let
-    fci_oracle_dot_str = to_gv(g_oracle, dag_1.vars)
-    fci_gauss_dot_str = to_gv(g_gauss, dag_1.vars)
-    g1 = GraphViz.Graph(dag_1.g_dot_str)
-    g2 = GraphViz.Graph(dag_1.est_g_dot_str)
-    g3 = GraphViz.Graph(fci_oracle_dot_str)
-    g4 = GraphViz.Graph(fci_gauss_dot_str)
-    f = Figure(resolution=default_figure_resolution)
-    ax = Axis(f[1, 1]; aspect=DataAspect(), title="True (generational) DAG")
-    CairoMakie.image!(rotr90(create_png_image(g1)))
-    hidedecorations!(ax)
-    hidespines!(ax)
-    ax = Axis(f[1, 2]; aspect=DataAspect(), title="PC estimated DAG")
-    CairoMakie.image!(rotr90(create_png_image(g2)))
-    hidedecorations!(ax)
-    hidespines!(ax)
-    ax = Axis(f[2, 1]; aspect=DataAspect(), title="FCI oracle estimated DAG")
-    CairoMakie.image!(rotr90(create_png_image(g3)))
-    hidedecorations!(ax)
-    hidespines!(ax)
-    ax = Axis(f[2, 2]; aspect=DataAspect(), title="FCI gauss estimated DAG")
-    CairoMakie.image!(rotr90(create_png_image(g4)))
-    hidedecorations!(ax)
-    hidespines!(ax)
-    f
-end
+g_gauss = fcialg(dag_1_fci.df, 0.05, gausscitest)
 
 # ╔═╡ fad832c7-ec30-4382-9555-cd1ddfd6a909
 md" ##### Play around with the effect of varying the strength of Z -> W."
@@ -251,20 +225,19 @@ end
 # ╠═1fa40de3-9423-43af-ae3c-78f89f9897bb
 # ╟─ad08dd09-222a-4071-92d4-38deebaf2e82
 # ╠═6bbfe4cb-f7e1-4503-a386-092882a1a49c
+# ╠═5cd68086-a5e2-4ff1-a02b-1385b4e538d6
 # ╠═2e52ff5a-41de-4cca-918c-f1c9b2be9e2e
 # ╠═49bb18f3-d914-4600-9750-6a0478712851
-# ╠═f6edfa9e-6405-4fcf-a2bc-e05f88acff9d
 # ╠═b71c9a06-2ecd-40f3-95f7-948a73290d40
 # ╠═d0360ab1-afea-41a6-95ca-a43468d632ce
 # ╠═a0cc8175-4f83-45f8-8bba-3e0679ff4ccb
+# ╠═e7b38d4b-7dec-4d58-b712-e09b894d9418
 # ╠═00ad74d9-62d8-4ced-8bf1-eace47470272
 # ╠═5533711c-6cbb-4407-8081-1ab44a09a8b9
 # ╠═6d999053-3612-4e8d-b2f2-2ddf3eae5630
 # ╠═d94d4717-7ca8-4db9-ae54-fc481aa63c3c
 # ╟─e250a4cc-65a5-4c86-bffb-987f664f12c8
-# ╠═c78f95b1-5015-4ae6-ba21-8bea7a7b8772
 # ╠═c60bb1fb-3f0f-4ee6-884b-994f994788b0
-# ╠═0db37602-6997-474a-8cc1-0b3bc8a6fb40
 # ╟─fad832c7-ec30-4382-9555-cd1ddfd6a909
 # ╠═8c7df65a-88fe-47ba-8ed5-39f469ade8aa
 # ╠═75a21a67-dfb6-4fba-b356-f611c403adab
