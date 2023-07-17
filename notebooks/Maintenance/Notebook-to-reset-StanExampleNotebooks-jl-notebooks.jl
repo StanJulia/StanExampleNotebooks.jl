@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -20,7 +20,7 @@ html"""
 		margin: 0 auto;
 		max-width: 3500px;
     	padding-left: max(5px, 5%);
-    	padding-right: max(5px, 30%);
+    	padding-right: max(5px, 5%);
 	}
 </style>
 """
@@ -28,15 +28,28 @@ html"""
 # ╔═╡ d98a3a0a-947e-11ed-13a2-61b5b69b4df5
 notebook_files = [
     "~/.julia/dev/StanExampleNotebooks/notebooks/ARM/Radon/radon.jl",
+
     "~/.julia/dev/StanExampleNotebooks/notebooks/BridgeStan/test_bridgestan.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/BridgeStan/bridgestan_stansample_example.jl",
-    "~/.julia/dev/StanExampleNotebooks/notebooks/CausalInference/CausalInference.jl",
+
+    "~/.julia/dev/StanExampleNotebooks/notebooks/CausalInference/Ferenc Huszár/Example 1.jl",
+    "~/.julia/dev/StanExampleNotebooks/notebooks/CausalInference/Statistical Rethinking/CausalInference.jl",
+    "~/.julia/dev/StanExampleNotebooks/notebooks/CausalInference/Statistical Rethinking/Counterfactual example.jl",
+    "~/.julia/dev/StanExampleNotebooks/notebooks/CausalInference/Statistical Rethinking/SR2 example 2.jl",
+    "~/.julia/dev/StanExampleNotebooks/notebooks/CausalInference/The book of why/Example 1.jl",
+    "~/.julia/dev/StanExampleNotebooks/notebooks/CausalInference/The book of why/Example 2.jl",
+
     "~/.julia/dev/StanExampleNotebooks/notebooks/DataFrames/Dataframes.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/DataFrames/Nested-DataFrame.jl",
+
     "~/.julia/dev/StanExampleNotebooks/notebooks/DimensionalData/dimensionaldata.jl",
+
     "~/.julia/dev/StanExampleNotebooks/notebooks/InferenceObjects/InferenceObjects.jl",
+
     "~/.julia/dev/StanExampleNotebooks/notebooks/Logging/ShowLogging.jl",
+
     "~/.julia/dev/StanExampleNotebooks/notebooks/PosteriorDB/PosteriorDB.jl",
+
     "~/.julia/dev/StanExampleNotebooks/notebooks/Stan-intros/intro-stan-00s.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/Stan-intros/intro-stan-01s.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/Stan-intros/intro-stan-02s.jl",
@@ -44,6 +57,7 @@ notebook_files = [
     "~/.julia/dev/StanExampleNotebooks/notebooks/Stan-intros/intro-stan-logpdf.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/Stan-intros/intro-stan-optimize.jl",
     "~/.julia/dev/StanExampleNotebooks/notebooks/Stan-intros/intro-stan-priors.jl",
+
 	"~/.julia/dev/StanExampleNotebooks/notebooks/Maintenance/Notebook-to-reset-StanExampleNotebooks-jl-notebooks.jl"
 ];
 
