@@ -69,6 +69,75 @@ end;
 # ╔═╡ 9bf77cd3-31bc-49a1-8ab9-3e03071dadf4
 dag = create_fci_dag("AMD", dfAMD, "Digraph AMD {A->M; A->D; M->D;}");
 
+# ╔═╡ deaaf0ff-ea48-4d71-8f26-3e868b92ffcd
+fieldnames(typeof(dag))
+
+# ╔═╡ 20e5077c-16c2-4253-a3d1-d43c280f7a0a
+dag.vars
+
+# ╔═╡ 4c24b388-0ff2-425d-a88e-32c6c35a7d88
+vertices(dag.est_g)
+
+# ╔═╡ 4c088da7-7e25-4ded-bf22-7fad3d064ebe
+dag.est_g
+
+# ╔═╡ 2d1c6b35-abea-422c-b600-f98946a9adc3
+dag.g
+
+# ╔═╡ 0c77b425-2c6c-482f-ad2c-dd9a456a3da9
+dag.est_g
+
+# ╔═╡ 38ddec4b-23db-4413-b8ed-03adb577c24b
+vertices(dag.g)
+
+# ╔═╡ 187b4f81-d46e-414c-9957-1911908807c9
+find_covariate_adjustment(dag.est_g, 2, 3)
+
+# ╔═╡ 4261e123-ee38-450c-94e7-6d1be4173462
+find_covariate_adjustment(dag.g, 2, 3)
+
+# ╔═╡ 8e1bd865-4692-42a0-a61c-0299d4e8f266
+find_covariate_adjustment(dag.est_g, [2], [3])
+
+# ╔═╡ bbf36742-55d8-4ccd-a376-29e39062b51e
+typeof(dag.est_g)
+
+# ╔═╡ ae3a7ac0-69e0-4f90-85b8-c8c4103aaf49
+fieldnames(MetaDiGraph{Int64, Float64})
+
+# ╔═╡ 1c8846ac-7b65-4ed4-823b-ca2d73f27502
+dag1 = create_pcalg_gauss_dag("AMD", dfAMD, "Digraph AMD {A->M; A->D; M->D;}");
+
+# ╔═╡ 03408f78-b549-4f4e-a838-95824b6990cc
+typeof(dag1.g)
+
+# ╔═╡ 28fac36c-32b4-4c89-8684-c372a2be9c4a
+typeof(dag1.est_g)
+
+# ╔═╡ 40396914-8690-4be6-b0c8-2261b4d45b6d
+dag1.g
+
+# ╔═╡ b4fc26fd-40c9-4924-a5d1-b93c62f68f59
+dag1.g_dot_str
+
+# ╔═╡ 22597b0f-6c10-4983-9802-f1a6675d82ef
+dag1.est_g
+
+# ╔═╡ fbe07726-084c-4faf-ab17-7c8110d26ccd
+dag1.est_g_dot_str
+
+# ╔═╡ a33396b5-dd4f-497a-8234-efdc92ce9c09
+gvplot(dag1)
+
+# ╔═╡ 89ebb6b1-0c6f-49dc-9ae2-ab5ed8a51f7a
+fieldnames(typeof(dag1))
+
+# ╔═╡ 4ef9c3d2-c486-40dd-8fe2-970e91225d96
+list_backdoor_adjustment(dag1.g, Set(1), 3)
+
+# ╔═╡ c48ad294-68ab-44be-b53b-2797d2b6e51e
+list_dseps(dag1.g, 1, 3)
+
 # ╔═╡ 9fbe5dbb-793d-4ac7-8227-e86b5fc557b5
 gvplot(dag)
 
@@ -244,6 +313,29 @@ end
 # ╠═98d7c715-1fa0-434a-9498-12c54224647d
 # ╠═e1eea04a-abdf-49ad-a4ef-e645fbd06a09
 # ╠═9bf77cd3-31bc-49a1-8ab9-3e03071dadf4
+# ╠═deaaf0ff-ea48-4d71-8f26-3e868b92ffcd
+# ╠═20e5077c-16c2-4253-a3d1-d43c280f7a0a
+# ╠═4c24b388-0ff2-425d-a88e-32c6c35a7d88
+# ╠═4c088da7-7e25-4ded-bf22-7fad3d064ebe
+# ╠═2d1c6b35-abea-422c-b600-f98946a9adc3
+# ╠═0c77b425-2c6c-482f-ad2c-dd9a456a3da9
+# ╠═38ddec4b-23db-4413-b8ed-03adb577c24b
+# ╠═187b4f81-d46e-414c-9957-1911908807c9
+# ╠═4261e123-ee38-450c-94e7-6d1be4173462
+# ╠═8e1bd865-4692-42a0-a61c-0299d4e8f266
+# ╠═bbf36742-55d8-4ccd-a376-29e39062b51e
+# ╠═ae3a7ac0-69e0-4f90-85b8-c8c4103aaf49
+# ╠═1c8846ac-7b65-4ed4-823b-ca2d73f27502
+# ╠═03408f78-b549-4f4e-a838-95824b6990cc
+# ╠═28fac36c-32b4-4c89-8684-c372a2be9c4a
+# ╠═40396914-8690-4be6-b0c8-2261b4d45b6d
+# ╠═b4fc26fd-40c9-4924-a5d1-b93c62f68f59
+# ╠═22597b0f-6c10-4983-9802-f1a6675d82ef
+# ╠═fbe07726-084c-4faf-ab17-7c8110d26ccd
+# ╠═a33396b5-dd4f-497a-8234-efdc92ce9c09
+# ╠═89ebb6b1-0c6f-49dc-9ae2-ab5ed8a51f7a
+# ╠═4ef9c3d2-c486-40dd-8fe2-970e91225d96
+# ╠═c48ad294-68ab-44be-b53b-2797d2b6e51e
 # ╠═9fbe5dbb-793d-4ac7-8227-e86b5fc557b5
 # ╠═2cc487d9-4659-4c07-ac37-b94fbebec8df
 # ╠═cf696155-bb74-47ec-94dc-99a8563bc270

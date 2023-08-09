@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -107,13 +107,13 @@ md" ### CausalInference.jl"
 # ╔═╡ 6bbfe4cb-f7e1-4503-a386-092882a1a49c
 begin
 	dag_1_dot_str = "DiGraph Dag_1 {x -> v; x -> w; w -> z; v -> z; z -> s;}"
-	dag_1_fci = create_fci_dag("Dag_1", df1, dag_1_dot_str)
+	@time dag_1_fci = create_fci_dag("Dag_1", df1, dag_1_dot_str)
 	gvplot(dag_1_fci)
 end
 
 # ╔═╡ 5cd68086-a5e2-4ff1-a02b-1385b4e538d6
 begin
-	dag_1_pc = create_pc_dag("Dag_1", df1, dag_1_dot_str)
+	@time dag_1_pc = create_pcalg_gauss_dag("Dag_1", df1, dag_1_dot_str)
 	gvplot(dag_1_pc)
 end
 
@@ -144,14 +144,8 @@ dsep(dag_1_fci, :x, :z, [:v], verbose=true)
 # ╔═╡ 6d999053-3612-4e8d-b2f2-2ddf3eae5630
 dsep(dag_1_fci, :x, :z, [:v, :w], verbose=true)
 
-# ╔═╡ d94d4717-7ca8-4db9-ae54-fc481aa63c3c
-@time est_dag_1_g = pcalg(df1, p, gausscitest)
-
 # ╔═╡ e250a4cc-65a5-4c86-bffb-987f664f12c8
 md" ##### Compare with FCI algorithm results."
-
-# ╔═╡ c60bb1fb-3f0f-4ee6-884b-994f994788b0
-g_gauss = fcialg(dag_1_fci.df, 0.05, gausscitest)
 
 # ╔═╡ fad832c7-ec30-4382-9555-cd1ddfd6a909
 md" ##### Play around with the effect of varying the strength of Z -> W."
@@ -235,9 +229,7 @@ end
 # ╠═00ad74d9-62d8-4ced-8bf1-eace47470272
 # ╠═5533711c-6cbb-4407-8081-1ab44a09a8b9
 # ╠═6d999053-3612-4e8d-b2f2-2ddf3eae5630
-# ╠═d94d4717-7ca8-4db9-ae54-fc481aa63c3c
 # ╟─e250a4cc-65a5-4c86-bffb-987f664f12c8
-# ╠═c60bb1fb-3f0f-4ee6-884b-994f994788b0
 # ╟─fad832c7-ec30-4382-9555-cd1ddfd6a909
 # ╠═8c7df65a-88fe-47ba-8ed5-39f469ade8aa
 # ╠═75a21a67-dfb6-4fba-b356-f611c403adab
