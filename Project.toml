@@ -5,6 +5,6 @@ DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
 Stan = "682df890-35be-576f-97d0-3d8c8b33a550"
 
 [compat]
-DrWatson = "2.12.1"
-Stan = "10.2"
+DrWatson = "2"
+Stan = "10"
 julia = "1.10.0"
