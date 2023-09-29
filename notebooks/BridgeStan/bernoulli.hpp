@@ -35,7 +35,7 @@ class bernoulli_model final : public model_base_crtp<bernoulli_model> {
     // suppress unused var warning
     (void) DUMMY_VAR__;
     try {
-      int pos__;
+      int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
       current_statement__ = 4;
       context__.validate_dims("data initialization", "N", "int",
@@ -67,7 +67,7 @@ class bernoulli_model final : public model_base_crtp<bernoulli_model> {
   }
   inline std::vector<std::string> model_compile_info() const noexcept {
     return std::vector<std::string>{"stanc_version = stanc3 v2.32.2",
-             "stancflags = --include-paths=. --warn-pedantic --O1"};
+             "stancflags = "};
   }
   template <bool propto__, bool jacobian__, typename VecR, typename VecI,
             stan::require_vector_like_t<VecR>* = nullptr,
@@ -89,7 +89,7 @@ class bernoulli_model final : public model_base_crtp<bernoulli_model> {
     // suppress unused var warning
     (void) function__;
     try {
-      local_scalar_t__ theta;
+      local_scalar_t__ theta = DUMMY_VAR__;
       current_statement__ = 1;
       theta = in__.template read_constrain_lub<local_scalar_t__,
                 jacobian__>(0, 1, lp__);
@@ -136,7 +136,7 @@ class bernoulli_model final : public model_base_crtp<bernoulli_model> {
     // suppress unused var warning
     (void) function__;
     try {
-      double theta;
+      double theta = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 1;
       theta = in__.template read_constrain_lub<local_scalar_t__,
                 jacobian__>(0, 1, lp__);
@@ -167,9 +167,9 @@ class bernoulli_model final : public model_base_crtp<bernoulli_model> {
     // suppress unused var warning
     (void) DUMMY_VAR__;
     try {
-      int pos__;
+      int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      local_scalar_t__ theta;
+      local_scalar_t__ theta = DUMMY_VAR__;
       current_statement__ = 1;
       theta = in__.read<local_scalar_t__>();
       out__.write_free_lub(0, 1, theta);
@@ -191,9 +191,9 @@ class bernoulli_model final : public model_base_crtp<bernoulli_model> {
       current_statement__ = 1;
       context__.validate_dims("parameter initialization", "theta", "double",
         std::vector<size_t>{});
-      int pos__;
+      int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      local_scalar_t__ theta;
+      local_scalar_t__ theta = DUMMY_VAR__;
       current_statement__ = 1;
       theta = context__.vals_r("theta")[(1 - 1)];
       out__.write_free_lub(0, 1, theta);

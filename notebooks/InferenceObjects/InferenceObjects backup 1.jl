@@ -1,89 +1,146 @@
 ### A Pluto.jl notebook ###
-# v0.19.29
+# v0.19.28
 
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 8c33d170-55cc-41ef-9a87-f27b644a5133
-######### BridgeStan Bernoulli example  ###########
+# ╔═╡ 3a1b3129-e17b-48c5-b7c2-a8caaa55a442
+using Pkg
 
+# ╔═╡ a92b66bc-4869-4bd1-8a5a-c519df844fcf
 begin
-	using BridgeStan
-	using DataFrames
+	using CSV, DataFrames, NamedTupleTools
+	using InferenceObjects
 	using StanSample
 end
 
-# ╔═╡ 5546d52c-a124-4ba7-acd3-9d8b28d78e93
-ProjDir = "/Users/rob/.julia/dev/StanExampleNotebooks/notebooks/BridgeStan";
+# ╔═╡ cecf32d4-6047-11ed-31d9-9514b3067c9c
+html"""
+<style>
+	main {
+		margin: 0 auto;
+		max-width: 3000px;
+    	padding-left: max(10px, 5%);
+    	padding-right: max(160px, 38%);
+	}
+</style>
+"""
 
-# ╔═╡ 2b25bf00-406f-4e46-a398-8ab6f61c7969
-isfile(joinpath(ProjDir, "bernoulli.stan"))
+# ╔═╡ 6730545f-4774-4fb2-8c22-aec8c6835610
+#Pkg.activate(expanduser("~/.julia/dev/StanExampleNotebooks"))
 
-# ╔═╡ 72a9c5e8-cc16-4d06-be05-73d403448b4c
-isfile(joinpath(ProjDir, "bernoulli_data_2.json"))
+# ╔═╡ 8579afa5-4b67-4b64-9f4a-5de9add5fec4
+stan_schools = """
+data {
+    int<lower=0> J;
+    real y[J];
+    real<lower=0> sigma[J];
+}
 
-# ╔═╡ 2c33370f-7b12-4d5b-a48a-880ca33a5ab4
-get_bridgestan_path()
+parameters {
+    real mu;
+    real<lower=0> tau;
+    real theta_tilde[J];
+}
 
-# ╔═╡ 98b7a7a1-09e9-4742-84e6-6b3eaf6242f6
-smb = BridgeStan.StanModel(;
-    stan_file = joinpath(ProjDir, "bernoulli.stan"),
-    #stanc_args = ["--warn-pedantic --O1"],
-    #make_args = ["CXX=clang++", "STAN_THREADS=true"],
-    data=joinpath(ProjDir, "bernoulli_data_2.json"),
-    seed = 204,
-    #chain_id = 0
-)
+transformed parameters {
+    real theta[J];
+    for (j in 1:J)
+        theta[j] = mu + tau * theta_tilde[j];
+}
 
-# ╔═╡ 51d05e4a-652a-4807-af7d-7dee1d5bcf20
+model {
+    mu ~ normal(0, 5);
+    tau ~ cauchy(0, 5);
+    theta_tilde ~ normal(0, 1);
+    y ~ normal(theta, sigma);
+}
 
+generated quantities {
+    vector[J] log_lik;
+    vector[J] y_hat;
+    for (j in 1:J) {
+        log_lik[j] = normal_lpdf(y[j] | theta[j], sigma[j]);
+        y_hat[j] = normal_rng(theta[j], sigma[j]);
+    }
+}
+""";
 
-# ╔═╡ aab341e5-3495-41a6-ba32-c2c47fef8265
-println("This model's name is $(BridgeStan.name(smb)).")
+# ╔═╡ b7291faa-3487-4ed5-ae41-501f83f0bf3c
+data = Dict(
+    "J" => 8,
+    "y" => [28.0, 8.0, -3.0, 7.0, -1.0, 1.0, 18.0, 12.0],
+    "sigma" => [15.0, 10.0, 16.0, 11.0, 9.0, 11.0, 10.0, 18.0]
+);
 
-# ╔═╡ 8e97fa1c-ddbd-4a4a-b823-1c7eee69e55d
-println("It has $(BridgeStan.param_num(smb)) parameters.")
+# ╔═╡ a1e486d9-ad7f-48ae-8d51-9ae446e6c030
+begin
+	m_schools = SampleModel("eight_schools", stan_schools)
+	rc = stan_sample(m_schools; data, save_warmup=true)
+end;
 
-# ╔═╡ 971aed05-21be-4c77-9f8d-85a50af4aa7b
-if typeof(smb) == BridgeStan.StanModel
-    x = rand(BridgeStan.param_unc_num(smb))
-    q = @. log(x / (1 - x))        # unconstrained scale
+# ╔═╡ 91e75953-130e-471e-9869-4164c90295f7
+df = read_samples(m_schools, :dataframe; include_internals=true)
 
-    lp, grad = BridgeStan.log_density_gradient(smb, q, jacobian = 0)
-
-    "log_density and gradient of Bernoulli model: $(round(lp[1]; digits=3)), $(round(grad[1]; digits=3))"
-	
+# ╔═╡ d572fb32-4ccf-4ba9-a995-48877e90f232
+if success(rc)
+    idata = inferencedata(m_schools; log_likelihood_var=:log_lik, posterior_predictive_var=:y_hat)
+    idata = merge(idata, from_namedtuple(; observed_data = namedtuple(data)))
+else
+    @warn "Sampling failed."
 end
 
-# ╔═╡ a006e817-57dc-468f-b051-56e7b94334fd
-if typeof(smb) == BridgeStan.StanModel
-    function sim(smb::BridgeStan.StanModel, x=LinRange(0.1, 0.9, 100))
-        q = zeros(length(x))
-        ld = zeros(length(x))
-        g = Vector{Vector{Float64}}(undef, length(x))
-        for (i, p) in enumerate(x)
-            q[i] = @. log(p / (1 - p)) # unconstrained scale
-            ld[i], g[i] = BridgeStan.log_density_gradient(smb, q[i:i],
-                jacobian = 0)
-        end
-        return DataFrame(x=x, q=q, log_density=ld, gradient=g)
-    end
+# ╔═╡ 150f9cea-91da-4648-8469-dfb4c852227a
+md" ##### To see more details, click on any of the triangles above or specify group as shown below."
 
-  sim(smb)
+# ╔═╡ 3b2eee33-a2f2-4dc8-a4a1-89fa036a1385
+idata.posterior
 
+# ╔═╡ 4d703d31-d03e-4c37-b4b9-c29f29b5cc62
+if :observed_data in propertynames(idata)
+	idata.observed_data
 end
+
+# ╔═╡ 8a6367b7-92f9-498e-874d-868b0a402d3e
+DataFrame(idata.observed_data)
+
+# ╔═╡ 5bf5c448-5b76-4c77-9529-9106f94bc1ef
+keys(idata.posterior)
+
+# ╔═╡ 9a15cd96-2863-4b87-b3eb-3d14fb128b6d
+post_schools = read_samples(m_schools, :dataframe; start=1001)
+
+# ╔═╡ 4da97b66-2c45-4c19-aa32-487a95fb23e9
+posterior_schools = DataFrame(idata.posterior)
+
+# ╔═╡ 8f52ef47-46e2-4028-83f1-c9cd183bc799
+DataFrame(inferencedata(m_schools).posterior) |> size
+
+# ╔═╡ 2e19a32a-4a26-4b53-8173-ea3d74eb19f4
+DataFrame(inferencedata(m_schools; dims=(theta=[:school], theta_tilde=[:school])).posterior)
+
+# ╔═╡ 30b9724d-73f4-4888-9698-b01f0ed1c720
+DataFrame(inferencedata(m_schools; dims=(theta=[:school], theta_tilde=[:school])).posterior) |> size
+
+# ╔═╡ 912457a9-1438-4dd1-840b-b620d5d7ccaa
+DataFrame(idata.sample_stats)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-BridgeStan = "c88b6f0a-829e-4b0b-94b7-f06ab5908f5a"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+InferenceObjects = "b5cf5a8d-e756-4ee3-b014-01d49d192c00"
+NamedTupleTools = "d9ec5142-1e00-5aa0-9d6a-321866360f50"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 StanSample = "c1514b29-d3a0-5178-b312-660c88baa699"
 
 [compat]
-BridgeStan = "~2.1.2"
+CSV = "~0.10.11"
 DataFrames = "~1.6.1"
-StanSample = "~7.4.4"
+InferenceObjects = "~0.3.11"
+NamedTupleTools = "~0.14.3"
+StanSample = "~7.4.2"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -92,28 +149,56 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.0-beta2"
 manifest_format = "2.0"
-project_hash = "29762c56220b9423995679d5df61befa261f3628"
+project_hash = "9d62454beb550023096f85b418f31b21a92eb03b"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
 uuid = "a4c015fc-c6ff-483c-b24f-f7ea428134e9"
 version = "0.0.1"
 
+[[deps.Adapt]]
+deps = ["LinearAlgebra", "Requires"]
+git-tree-sha1 = "76289dc51920fdc6e0013c872ba9551d54961c24"
+uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
+version = "3.6.2"
+
+    [deps.Adapt.extensions]
+    AdaptStaticArraysExt = "StaticArrays"
+
+    [deps.Adapt.weakdeps]
+    StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 version = "1.1.1"
+
+[[deps.ArrayInterface]]
+deps = ["Adapt", "LinearAlgebra", "Requires", "SparseArrays", "SuiteSparse"]
+git-tree-sha1 = "f83ec24f76d4c8f525099b2ac475fc098138ec31"
+uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
+version = "7.4.11"
+
+    [deps.ArrayInterface.extensions]
+    ArrayInterfaceBandedMatricesExt = "BandedMatrices"
+    ArrayInterfaceBlockBandedMatricesExt = "BlockBandedMatrices"
+    ArrayInterfaceCUDAExt = "CUDA"
+    ArrayInterfaceGPUArraysCoreExt = "GPUArraysCore"
+    ArrayInterfaceStaticArraysCoreExt = "StaticArraysCore"
+    ArrayInterfaceTrackerExt = "Tracker"
+
+    [deps.ArrayInterface.weakdeps]
+    BandedMatrices = "aae01518-5342-5314-be14-df237901396f"
+    BlockBandedMatrices = "ffab5731-97b5-5995-9138-79e8c1846df0"
+    CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+    GPUArraysCore = "46192b85-c4d5-4398-a991-12ede77f4527"
+    StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
+    Tracker = "9f7883ad-71c0-57eb-9f7f-b5c9e6d3789c"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
-
-[[deps.BridgeStan]]
-deps = ["LazyArtifacts"]
-git-tree-sha1 = "c45b4d0c7aaef5cc8f81e6da0b5f4d8c4efd2ef9"
-uuid = "c88b6f0a-829e-4b0b-94b7-f06ab5908f5a"
-version = "2.1.2"
 
 [[deps.CSV]]
 deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "PrecompileTools", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings", "WorkerUtilities"]
@@ -147,6 +232,20 @@ version = "0.1.25"
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 version = "1.0.5+1"
+
+[[deps.ConstructionBase]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "fe2838a593b5f776e1597e086dcd47560d94e816"
+uuid = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
+version = "1.5.3"
+
+    [deps.ConstructionBase.extensions]
+    ConstructionBaseIntervalSetsExt = "IntervalSets"
+    ConstructionBaseStaticArraysExt = "StaticArrays"
+
+    [deps.ConstructionBase.weakdeps]
+    IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
+    StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [[deps.Crayons]]
 git-tree-sha1 = "249fe38abf76d48563e2f4556bebd215aa317e15"
@@ -185,6 +284,12 @@ git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
 
+[[deps.DimensionalData]]
+deps = ["Adapt", "ArrayInterface", "ConstructionBase", "Dates", "Extents", "IntervalSets", "IteratorInterfaceExtensions", "LinearAlgebra", "PrecompileTools", "Random", "RecipesBase", "SparseArrays", "Statistics", "TableTraits", "Tables"]
+git-tree-sha1 = "8a6e9c0ac3a861b983af862cefabc12519884a13"
+uuid = "0703355e-b756-11e9-17c0-8b28908087d0"
+version = "0.24.13"
+
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
@@ -206,6 +311,11 @@ deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.6.0"
 
+[[deps.Extents]]
+git-tree-sha1 = "5e1e4c53fa39afe63a7d356e30452249365fba99"
+uuid = "411431e0-e8b7-467b-b5e0-f676ba4f2910"
+version = "0.1.1"
+
 [[deps.FilePathsBase]]
 deps = ["Compat", "Dates", "Mmap", "Printf", "Test", "UUIDs"]
 git-tree-sha1 = "e27c4ebe80e8699540f2d6c805cc12203b614f12"
@@ -225,6 +335,24 @@ git-tree-sha1 = "d75853a0bdbfb1ac815478bacd89cd27b550ace6"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
 version = "0.2.3"
 
+[[deps.InferenceObjects]]
+deps = ["Compat", "Dates", "DimensionalData", "Requires", "Tables"]
+git-tree-sha1 = "5f09ca089668d6c1f06f6380687468d1f6874242"
+uuid = "b5cf5a8d-e756-4ee3-b014-01d49d192c00"
+version = "0.3.11"
+
+    [deps.InferenceObjects.extensions]
+    InferenceObjectsMCMCDiagnosticToolsExt = ["MCMCDiagnosticTools", "Random"]
+    InferenceObjectsNCDatasetsExt = "NCDatasets"
+    InferenceObjectsPosteriorStatsExt = ["PosteriorStats", "StatsBase"]
+
+    [deps.InferenceObjects.weakdeps]
+    MCMCDiagnosticTools = "be115224-59cd-429b-ad48-344e309966f0"
+    NCDatasets = "85f8d34a-cbdd-5861-8df4-14fed0d494ab"
+    PosteriorStats = "7f36be82-ad55-44ba-a5c0-b8b5480d7aa5"
+    Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+    StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+
 [[deps.InlineStrings]]
 deps = ["Parsers"]
 git-tree-sha1 = "9cc2baf75c6d09f9da536ddf58eb2f29dedaf461"
@@ -234,6 +362,16 @@ version = "1.4.0"
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+
+[[deps.IntervalSets]]
+deps = ["Dates", "Random"]
+git-tree-sha1 = "8e59ea773deee525c99a8018409f64f19fb719e6"
+uuid = "8197267c-284f-5f27-9208-e0e47529a953"
+version = "0.7.7"
+weakdeps = ["Statistics"]
+
+    [deps.IntervalSets.extensions]
+    IntervalSetsStatisticsExt = "Statistics"
 
 [[deps.InvertedIndices]]
 git-tree-sha1 = "0dc7b50b8d436461be01300fd8cd45aa0274b038"
@@ -349,9 +487,9 @@ version = "1.10.0"
 
 [[deps.PooledArrays]]
 deps = ["DataAPI", "Future"]
-git-tree-sha1 = "36d8b4b899628fb92c2749eb488d884a926614d3"
+git-tree-sha1 = "a6062fe4063cdafe78f4a0a81cfffb89721b30e7"
 uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
-version = "1.4.3"
+version = "1.4.2"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
@@ -361,9 +499,9 @@ version = "1.2.0"
 
 [[deps.Preferences]]
 deps = ["TOML"]
-git-tree-sha1 = "00805cd429dcb4870060ff49ef443486c262e38e"
+git-tree-sha1 = "7eb1686b4f04b82f96ed7a4ea5890a4f0c7a09f1"
 uuid = "21216c6a-2e73-6563-6e65-726566657250"
-version = "1.4.1"
+version = "1.4.0"
 
 [[deps.PrettyTables]]
 deps = ["Crayons", "LaTeXStrings", "Markdown", "Printf", "Reexport", "StringManipulation", "Tables"]
@@ -382,6 +520,12 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 [[deps.Random]]
 deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[[deps.RecipesBase]]
+deps = ["PrecompileTools"]
+git-tree-sha1 = "5c3d09cc4f31f5fc6af001c250bf1278733100ff"
+uuid = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
+version = "1.3.4"
 
 [[deps.Reexport]]
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
@@ -423,15 +567,15 @@ version = "1.10.0"
 
 [[deps.StanBase]]
 deps = ["CSV", "DataFrames", "DelimitedFiles", "Distributed", "DocStringExtensions", "Documenter", "JSON", "NamedTupleTools", "OrderedCollections", "Parameters", "Random", "Unicode"]
-git-tree-sha1 = "2eb75d957bc160d3e3f5f2c6fe140754318aac1e"
+git-tree-sha1 = "a95a523e89061452fbb082060893760a3fa0a80f"
 uuid = "d0ee94f6-a23d-54aa-bbe9-7f572d6da7f5"
-version = "4.8.2"
+version = "4.8.1"
 
 [[deps.StanSample]]
 deps = ["CSV", "CompatHelperLocal", "DataFrames", "DelimitedFiles", "Distributed", "DocStringExtensions", "JSON", "LazyArtifacts", "NamedTupleTools", "OrderedCollections", "Parameters", "Random", "Reexport", "Requires", "Serialization", "StanBase", "TableOperations", "Tables", "Unicode"]
-git-tree-sha1 = "99376200bd9914dfc44ffdcee4fce9268a68ba91"
+git-tree-sha1 = "fe24115225f108e2eb9c87d3fe38694af0ff272a"
 uuid = "c1514b29-d3a0-5178-b312-660c88baa699"
-version = "7.4.4"
+version = "7.4.2"
 
     [deps.StanSample.extensions]
     AxisKeysExt = "AxisKeys"
@@ -451,10 +595,13 @@ uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 version = "1.9.0"
 
 [[deps.StringManipulation]]
-deps = ["PrecompileTools"]
-git-tree-sha1 = "a04cabe79c5f01f4d723cc6704070ada0b9d46d5"
+git-tree-sha1 = "46da2434b41f41ac3594ee9816ce5541c6096123"
 uuid = "892a3eda-7b42-436c-8928-eab12a02cf0e"
-version = "0.3.4"
+version = "0.3.0"
+
+[[deps.SuiteSparse]]
+deps = ["Libdl", "LinearAlgebra", "Serialization", "SparseArrays"]
+uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
 
 [[deps.SuiteSparse_jll]]
 deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
@@ -479,10 +626,10 @@ uuid = "3783bdb8-4a98-5b6b-af9a-565f29a5fe9c"
 version = "1.0.1"
 
 [[deps.Tables]]
-deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "OrderedCollections", "TableTraits"]
-git-tree-sha1 = "a1f34829d5ac0ef499f6d84428bd6b4c71f02ead"
+deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "OrderedCollections", "TableTraits", "Test"]
+git-tree-sha1 = "1544b926975372da01227b382066ab70e574a3ec"
 uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.11.0"
+version = "1.10.1"
 
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
@@ -544,16 +691,25 @@ version = "17.4.0+2"
 """
 
 # ╔═╡ Cell order:
-# ╠═8c33d170-55cc-41ef-9a87-f27b644a5133
-# ╠═5546d52c-a124-4ba7-acd3-9d8b28d78e93
-# ╠═2b25bf00-406f-4e46-a398-8ab6f61c7969
-# ╠═72a9c5e8-cc16-4d06-be05-73d403448b4c
-# ╠═2c33370f-7b12-4d5b-a48a-880ca33a5ab4
-# ╠═98b7a7a1-09e9-4742-84e6-6b3eaf6242f6
-# ╠═51d05e4a-652a-4807-af7d-7dee1d5bcf20
-# ╠═aab341e5-3495-41a6-ba32-c2c47fef8265
-# ╠═8e97fa1c-ddbd-4a4a-b823-1c7eee69e55d
-# ╠═971aed05-21be-4c77-9f8d-85a50af4aa7b
-# ╠═a006e817-57dc-468f-b051-56e7b94334fd
+# ╠═cecf32d4-6047-11ed-31d9-9514b3067c9c
+# ╠═3a1b3129-e17b-48c5-b7c2-a8caaa55a442
+# ╠═6730545f-4774-4fb2-8c22-aec8c6835610
+# ╠═a92b66bc-4869-4bd1-8a5a-c519df844fcf
+# ╠═8579afa5-4b67-4b64-9f4a-5de9add5fec4
+# ╠═b7291faa-3487-4ed5-ae41-501f83f0bf3c
+# ╠═a1e486d9-ad7f-48ae-8d51-9ae446e6c030
+# ╠═91e75953-130e-471e-9869-4164c90295f7
+# ╠═d572fb32-4ccf-4ba9-a995-48877e90f232
+# ╟─150f9cea-91da-4648-8469-dfb4c852227a
+# ╠═3b2eee33-a2f2-4dc8-a4a1-89fa036a1385
+# ╠═4d703d31-d03e-4c37-b4b9-c29f29b5cc62
+# ╠═8a6367b7-92f9-498e-874d-868b0a402d3e
+# ╠═5bf5c448-5b76-4c77-9529-9106f94bc1ef
+# ╠═9a15cd96-2863-4b87-b3eb-3d14fb128b6d
+# ╠═4da97b66-2c45-4c19-aa32-487a95fb23e9
+# ╠═8f52ef47-46e2-4028-83f1-c9cd183bc799
+# ╠═2e19a32a-4a26-4b53-8173-ea3d74eb19f4
+# ╠═30b9724d-73f4-4888-9698-b01f0ed1c720
+# ╠═912457a9-1438-4dd1-840b-b620d5d7ccaa
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

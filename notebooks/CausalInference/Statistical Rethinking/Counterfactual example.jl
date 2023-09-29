@@ -7,9 +7,6 @@ using InteractiveUtils
 # ╔═╡ f5ed29c5-7f99-4dd1-bfdc-34f4001b9c34
 using Pkg
 
-# ╔═╡ fed755ad-e816-4659-9389-7ef4008c6456
-#Pkg.activate(expanduser("~/.julia/dev/SR2StanPluto"))
-
 # ╔═╡ 283d88d1-0c3e-443e-bf44-63f03e869c12
 begin
 	# Causal inference support
@@ -44,6 +41,9 @@ html"""
 	}
 </style>
 """
+
+# ╔═╡ fed755ad-e816-4659-9389-7ef4008c6456
+#Pkg.activate(expanduser("~/.julia/dev/SR2StanPluto"))
 
 # ╔═╡ dcd24508-f4df-4b27-acb2-780f679f684d
 

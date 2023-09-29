@@ -8,7 +8,7 @@ using InteractiveUtils
 using Pkg
 
 # ╔═╡ 3dda1456-27a7-43b9-94df-8c1e66902ec1
-#Pkg.activate(expanduser("~/.julia/dev/SR2StanPluto"))
+Pkg.activate(expanduser("~/.julia/dev/SR2StanPluto"))
 
 # ╔═╡ aa89f177-03d8-409e-916e-208b9b897ea4
 begin
@@ -189,7 +189,6 @@ let
 	lines!(x3, ms2_0s[Symbol("a.3"), :mean] .+ ms2_0s[Symbol("b.3"), :mean] .* x3; color=:grey)
 	
 	f
-
 end
 
 # ╔═╡ Cell order:
