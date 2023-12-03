@@ -1,89 +1,76 @@
 ### A Pluto.jl notebook ###
-# v0.19.29
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 8c33d170-55cc-41ef-9a87-f27b644a5133
-######### BridgeStan Bernoulli example  ###########
+# ╔═╡ 3d7c5e2c-8eba-11ee-02c7-5382f0852ca2
+using Pkg
 
+# ╔═╡ ecf1f379-7774-4a41-928e-be10be1786b4
 begin
-	using BridgeStan
+	using StanIO
 	using DataFrames
-	using StanSample
+	using JSON
+	using NamedTupleTools
 end
 
-# ╔═╡ 5546d52c-a124-4ba7-acd3-9d8b28d78e93
-ProjDir = "/Users/rob/.julia/dev/StanExampleNotebooks/notebooks/BridgeStan";
+# ╔═╡ e953be75-6f32-4a33-bded-a809ff38e5cd
+md" ### Translation of [stanio](https://github.com/WardBrian/stanio) by Brian Ward."
 
-# ╔═╡ 2b25bf00-406f-4e46-a398-8ab6f61c7969
-isfile(joinpath(ProjDir, "bernoulli.stan"))
+# ╔═╡ 789c3f0b-8179-4126-baf5-fdd47b1938f5
+md" ##### Widen the cells."
 
-# ╔═╡ 72a9c5e8-cc16-4d06-be05-73d403448b4c
-isfile(joinpath(ProjDir, "bernoulli_data_2.json"))
+# ╔═╡ c08d0f35-92fb-4e10-81a6-5a68eea4d046
+html"""
+<style>
+	main {
+		margin: 0 auto;
+		max-width: 2000px;
+    	padding-left: max(160px, 10%);
+    	padding-right: max(160px, 10%);
+	}
+</style>
+"""
 
-# ╔═╡ 2c33370f-7b12-4d5b-a48a-880ca33a5ab4
-get_bridgestan_path()
+# ╔═╡ ca0a71bb-7ac1-4c01-9a0a-24f1ce1479bd
+md" #### Setup dataframes for testing."
 
-# ╔═╡ 98b7a7a1-09e9-4742-84e6-6b3eaf6242f6
-smb = BridgeStan.StanModel(;
-    stan_file = joinpath(ProjDir, "bernoulli.stan"),
-    #stanc_args = ["--warn-pedantic --O1"],
-    #make_args = ["CXX=clang++", "STAN_THREADS=true"],
-    data=joinpath(ProjDir, "bernoulli_data_2.json"),
-    seed = 204,
-    #chain_id = 0
-)
+# ╔═╡ 4e2984b1-435d-4cac-80ef-316060aa93af
+begin
+	csvfiles = filter(x -> x[end-3:end] == ".csv", readdir(joinpath(stanio_data, "test_data")))
+	csvfiles = joinpath.(joinpath(stanio_data, "test_data"), csvfiles)
+end;
 
-# ╔═╡ 51d05e4a-652a-4807-af7d-7dee1d5bcf20
+# ╔═╡ 78d5367b-542a-41b6-85da-fc616046dba4
+begin
+ 	df = StanIO.read_csvfiles(csvfiles, :dataframe)
+	#df = df[:, 8:end]
+ end
 
+# ╔═╡ 52084c1a-6db8-4c06-994e-0e0a9371c169
+dct = parse_header(names(df))
 
-# ╔═╡ aab341e5-3495-41a6-ba32-c2c47fef8265
-println("This model's name is $(BridgeStan.name(smb)).")
+# ╔═╡ 5cca3538-97f4-47d0-afa1-0bd95bf7f08e
+ndf = stan_variables(dct, df)
 
-# ╔═╡ 8e97fa1c-ddbd-4a4a-b823-1c7eee69e55d
-println("It has $(BridgeStan.param_num(smb)) parameters.")
-
-# ╔═╡ 971aed05-21be-4c77-9f8d-85a50af4aa7b
-if typeof(smb) == BridgeStan.StanModel
-    x = rand(BridgeStan.param_unc_num(smb))
-    q = @. log(x / (1 - x))        # unconstrained scale
-
-    lp, grad = BridgeStan.log_density_gradient(smb, q, jacobian = 0)
-
-    "log_density and gradient of Bernoulli model: $(round(lp[1]; digits=3)), $(round(grad[1]; digits=3))"
-	
-end
-
-# ╔═╡ a006e817-57dc-468f-b051-56e7b94334fd
-if typeof(smb) == BridgeStan.StanModel
-    function sim(smb::BridgeStan.StanModel, x=LinRange(0.1, 0.9, 100))
-        q = zeros(length(x))
-        ld = zeros(length(x))
-        g = Vector{Vector{Float64}}(undef, length(x))
-        for (i, p) in enumerate(x)
-            q[i] = @. log(p / (1 - p)) # unconstrained scale
-            ld[i], g[i] = BridgeStan.log_density_gradient(smb, q[i:i],
-                jacobian = 0)
-        end
-        return DataFrame(x=x, q=q, log_density=ld, gradient=g)
-    end
-
-  sim(smb)
-
-end
+# ╔═╡ 840b7534-79c6-457f-b541-0a5eb4b5f07b
+convert(NamedTuple, ndf)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-BridgeStan = "c88b6f0a-829e-4b0b-94b7-f06ab5908f5a"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-StanSample = "c1514b29-d3a0-5178-b312-660c88baa699"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+NamedTupleTools = "d9ec5142-1e00-5aa0-9d6a-321866360f50"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+StanIO = "a1b0710c-ff81-4c57-8075-167cfc590dd3"
 
 [compat]
-BridgeStan = "~2.1.2"
 DataFrames = "~1.6.1"
-StanSample = "~7.4.4"
+JSON = "~0.21.4"
+NamedTupleTools = "~0.14.3"
+StanIO = "~0.1.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -92,12 +79,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.0-beta3"
 manifest_format = "2.0"
-project_hash = "29762c56220b9423995679d5df61befa261f3628"
-
-[[deps.ANSIColoredPrinters]]
-git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
-uuid = "a4c015fc-c6ff-483c-b24f-f7ea428134e9"
-version = "0.0.1"
+project_hash = "57ccc67a43ae327ab5cd7ef191711bc542fe0224"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -109,12 +91,6 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
-[[deps.BridgeStan]]
-deps = ["LazyArtifacts"]
-git-tree-sha1 = "c45b4d0c7aaef5cc8f81e6da0b5f4d8c4efd2ef9"
-uuid = "c88b6f0a-829e-4b0b-94b7-f06ab5908f5a"
-version = "2.1.2"
-
 [[deps.CSV]]
 deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "PrecompileTools", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings", "WorkerUtilities"]
 git-tree-sha1 = "44dbf560808d49041989b8a96cae4cffbeb7966a"
@@ -123,25 +99,19 @@ version = "0.10.11"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
-git-tree-sha1 = "02aa26a4cf76381be7f66e020a3eddeb27b0a092"
+git-tree-sha1 = "cd67fc487743b2f0fd4380d4cbd3a24660d0eec8"
 uuid = "944b1d66-785c-5afd-91f1-9de20f533193"
-version = "0.7.2"
+version = "0.7.3"
 
 [[deps.Compat]]
 deps = ["UUIDs"]
-git-tree-sha1 = "e460f044ca8b99be31d35fe54fc33a5c33dd8ed7"
+git-tree-sha1 = "886826d76ea9e72b35fcd000e535588f7b60f21d"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.9.0"
+version = "4.10.1"
 weakdeps = ["Dates", "LinearAlgebra"]
 
     [deps.Compat.extensions]
     CompatLinearAlgebraExt = "LinearAlgebra"
-
-[[deps.CompatHelperLocal]]
-deps = ["DocStringExtensions", "Pkg", "UUIDs"]
-git-tree-sha1 = "be25ab802a22a212ce4da944fe60d7c250ddcfe1"
-uuid = "5224ae11-6099-4aaa-941d-3aab004bd678"
-version = "0.1.25"
 
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -185,21 +155,11 @@ git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
 
-[[deps.Distributed]]
-deps = ["Random", "Serialization", "Sockets"]
-uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
-
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
 git-tree-sha1 = "2fb1e02f2b635d0845df5d7c167fec4dd739b00d"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.9.3"
-
-[[deps.Documenter]]
-deps = ["ANSIColoredPrinters", "Base64", "Dates", "DocStringExtensions", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "REPL", "Test", "Unicode"]
-git-tree-sha1 = "39fd748a73dce4c05a9655475e437170d8fb1b67"
-uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-version = "0.27.25"
 
 [[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
@@ -208,9 +168,9 @@ version = "1.6.0"
 
 [[deps.FilePathsBase]]
 deps = ["Compat", "Dates", "Mmap", "Printf", "Test", "UUIDs"]
-git-tree-sha1 = "e27c4ebe80e8699540f2d6c805cc12203b614f12"
+git-tree-sha1 = "9f00e42f8d99fdde64d40c8ea5d14269a2e2c1aa"
 uuid = "48062228-2e41-5def-b9a4-89aafe57970f"
-version = "0.9.20"
+version = "0.9.21"
 
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
@@ -218,12 +178,6 @@ uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 [[deps.Future]]
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
-
-[[deps.IOCapture]]
-deps = ["Logging", "Random"]
-git-tree-sha1 = "d75853a0bdbfb1ac815478bacd89cd27b550ace6"
-uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
-version = "0.2.3"
 
 [[deps.InlineStrings]]
 deps = ["Parsers"]
@@ -252,13 +206,9 @@ uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.21.4"
 
 [[deps.LaTeXStrings]]
-git-tree-sha1 = "f2355693d6778a178ade15952b7ac47a4ff97996"
+git-tree-sha1 = "50901ebc375ed41dbf8058da26f9de442febbbec"
 uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
-version = "1.3.0"
-
-[[deps.LazyArtifacts]]
-deps = ["Artifacts", "Pkg"]
-uuid = "4af54fe1-eca0-43a8-85a7-787d91b784e3"
+version = "1.3.1"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
@@ -331,9 +281,9 @@ uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
 version = "0.3.23+2"
 
 [[deps.OrderedCollections]]
-git-tree-sha1 = "2e73fe17cac3c62ad1aebe70d44c963c3cfdc3e3"
+git-tree-sha1 = "dfdf5519f235516220579f949664f1bf44e741c5"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-version = "1.6.2"
+version = "1.6.3"
 
 [[deps.Parameters]]
 deps = ["OrderedCollections", "UnPack"]
@@ -343,9 +293,9 @@ version = "0.12.3"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "716e24b21538abc91f6205fd1d8363f39b442851"
+git-tree-sha1 = "a935806434c9d4c506ba941871b327b96d41f2bf"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.7.2"
+version = "2.8.0"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -371,10 +321,10 @@ uuid = "21216c6a-2e73-6563-6e65-726566657250"
 version = "1.4.1"
 
 [[deps.PrettyTables]]
-deps = ["Crayons", "LaTeXStrings", "Markdown", "Printf", "Reexport", "StringManipulation", "Tables"]
-git-tree-sha1 = "ee094908d720185ddbdc58dbe0c1cbe35453ec7a"
+deps = ["Crayons", "LaTeXStrings", "Markdown", "PrecompileTools", "Printf", "Reexport", "StringManipulation", "Tables"]
+git-tree-sha1 = "88b895d13d53b5577fd53379d913b9ab9ac82660"
 uuid = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
-version = "2.2.7"
+version = "2.3.1"
 
 [[deps.Printf]]
 deps = ["Unicode"]
@@ -393,21 +343,15 @@ git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
 version = "1.2.2"
 
-[[deps.Requires]]
-deps = ["UUIDs"]
-git-tree-sha1 = "838a3a4188e2ded87a4f9f184b4b0d78a1e91cb7"
-uuid = "ae029012-a4dd-5104-9daa-d747884805df"
-version = "1.3.0"
-
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
 
 [[deps.SentinelArrays]]
 deps = ["Dates", "Random"]
-git-tree-sha1 = "04bdff0b09c65ff3e06a05e3eb7b120223da3d39"
+git-tree-sha1 = "0e7508ff27ba32f26cd459474ca2ede1bc10991f"
 uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
-version = "1.4.0"
+version = "1.4.1"
 
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
@@ -417,38 +361,20 @@ uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
 [[deps.SortingAlgorithms]]
 deps = ["DataStructures"]
-git-tree-sha1 = "c60ec5c62180f27efea3ba2908480f8055e17cee"
+git-tree-sha1 = "5165dfb9fd131cf0c6957a3a7605dede376e7b63"
 uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
-version = "1.1.1"
+version = "1.2.0"
 
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 version = "1.10.0"
 
-[[deps.StanBase]]
-deps = ["CSV", "DataFrames", "DelimitedFiles", "Distributed", "DocStringExtensions", "Documenter", "JSON", "NamedTupleTools", "OrderedCollections", "Parameters", "Random", "Unicode"]
-git-tree-sha1 = "2eb75d957bc160d3e3f5f2c6fe140754318aac1e"
-uuid = "d0ee94f6-a23d-54aa-bbe9-7f572d6da7f5"
-version = "4.8.2"
-
-[[deps.StanSample]]
-deps = ["CSV", "CompatHelperLocal", "DataFrames", "DelimitedFiles", "Distributed", "DocStringExtensions", "JSON", "LazyArtifacts", "NamedTupleTools", "OrderedCollections", "Parameters", "Random", "Reexport", "Requires", "Serialization", "StanBase", "TableOperations", "Tables", "Unicode"]
-git-tree-sha1 = "99376200bd9914dfc44ffdcee4fce9268a68ba91"
-uuid = "c1514b29-d3a0-5178-b312-660c88baa699"
-version = "7.4.4"
-
-    [deps.StanSample.extensions]
-    AxisKeysExt = "AxisKeys"
-    InferenceObjectsExt = "InferenceObjects"
-    MCMCChainsExt = "MCMCChains"
-    MonteCarloMeasurementsExt = "MonteCarloMeasurements"
-
-    [deps.StanSample.weakdeps]
-    AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
-    InferenceObjects = "b5cf5a8d-e756-4ee3-b014-01d49d192c00"
-    MCMCChains = "c7f686f2-ff18-58e9-bc7b-31028e88f75d"
-    MonteCarloMeasurements = "0987c9cc-fe09-11e8-30f0-b96dd679fdca"
+[[deps.StanIO]]
+deps = ["CSV", "DataFrames", "DelimitedFiles", "DocStringExtensions", "JSON", "NamedTupleTools", "OrderedCollections", "Parameters", "Serialization", "TableOperations", "Tables", "Unicode"]
+git-tree-sha1 = "f0277f4362a6bc306a185c38f2d5381391d4e5f8"
+uuid = "a1b0710c-ff81-4c57-8075-167cfc590dd3"
+version = "0.1.0"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -485,9 +411,9 @@ version = "1.0.1"
 
 [[deps.Tables]]
 deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "OrderedCollections", "TableTraits"]
-git-tree-sha1 = "a1f34829d5ac0ef499f6d84428bd6b4c71f02ead"
+git-tree-sha1 = "cb76cf677714c095e535e3501ac7954732aeea2d"
 uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.11.0"
+version = "1.11.1"
 
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
@@ -499,10 +425,13 @@ deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[deps.TranscodingStreams]]
-deps = ["Random", "Test"]
-git-tree-sha1 = "9a6ae7ed916312b41236fcef7e0af564ef934769"
+git-tree-sha1 = "1fbeaaca45801b4ba17c251dd8603ef24801dd84"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.9.13"
+version = "0.10.2"
+weakdeps = ["Random", "Test"]
+
+    [deps.TranscodingStreams.extensions]
+    TestExt = ["Test", "Random"]
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
@@ -549,16 +478,16 @@ version = "17.4.0+2"
 """
 
 # ╔═╡ Cell order:
-# ╠═8c33d170-55cc-41ef-9a87-f27b644a5133
-# ╠═5546d52c-a124-4ba7-acd3-9d8b28d78e93
-# ╠═2b25bf00-406f-4e46-a398-8ab6f61c7969
-# ╠═72a9c5e8-cc16-4d06-be05-73d403448b4c
-# ╠═2c33370f-7b12-4d5b-a48a-880ca33a5ab4
-# ╠═98b7a7a1-09e9-4742-84e6-6b3eaf6242f6
-# ╠═51d05e4a-652a-4807-af7d-7dee1d5bcf20
-# ╠═aab341e5-3495-41a6-ba32-c2c47fef8265
-# ╠═8e97fa1c-ddbd-4a4a-b823-1c7eee69e55d
-# ╠═971aed05-21be-4c77-9f8d-85a50af4aa7b
-# ╠═a006e817-57dc-468f-b051-56e7b94334fd
+# ╟─e953be75-6f32-4a33-bded-a809ff38e5cd
+# ╟─789c3f0b-8179-4126-baf5-fdd47b1938f5
+# ╠═c08d0f35-92fb-4e10-81a6-5a68eea4d046
+# ╠═3d7c5e2c-8eba-11ee-02c7-5382f0852ca2
+# ╠═ecf1f379-7774-4a41-928e-be10be1786b4
+# ╟─ca0a71bb-7ac1-4c01-9a0a-24f1ce1479bd
+# ╠═4e2984b1-435d-4cac-80ef-316060aa93af
+# ╠═78d5367b-542a-41b6-85da-fc616046dba4
+# ╠═52084c1a-6db8-4c06-994e-0e0a9371c169
+# ╠═5cca3538-97f4-47d0-afa1-0bd95bf7f08e
+# ╠═840b7534-79c6-457f-b541-0a5eb4b5f07b
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
