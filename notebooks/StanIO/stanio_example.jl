@@ -28,7 +28,7 @@ html"""
 		margin: 0 auto;
 		max-width: 2000px;
     	padding-left: max(160px, 10%);
-    	padding-right: max(160px, 10%);
+    	padding-right: max(160px, 20%);
 	}
 </style>
 """
@@ -38,8 +38,8 @@ md" #### Setup dataframes for testing."
 
 # ╔═╡ 4e2984b1-435d-4cac-80ef-316060aa93af
 begin
-	csvfiles = filter(x -> x[end-3:end] == ".csv", readdir(joinpath(stanio_data, "test_data")))
-	csvfiles = joinpath.(joinpath(stanio_data, "test_data"), csvfiles)
+	csvfiles = filter(x -> x[end-3:end] == ".csv", readdir(joinpath(stanio_data, "pure_01")))
+	csvfiles = joinpath.(joinpath(stanio_data, "pure_01"), csvfiles)
 end;
 
 # ╔═╡ 78d5367b-542a-41b6-85da-fc616046dba4
@@ -70,7 +70,7 @@ StanIO = "a1b0710c-ff81-4c57-8075-167cfc590dd3"
 DataFrames = "~1.6.1"
 JSON = "~0.21.4"
 NamedTupleTools = "~0.14.3"
-StanIO = "~0.1.0"
+StanIO = "~0.1.2"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -79,7 +79,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.0-beta3"
 manifest_format = "2.0"
-project_hash = "57ccc67a43ae327ab5cd7ef191711bc542fe0224"
+project_hash = "d1d62ca717e9f844f26519e58389d6dba40bcbf9"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -372,9 +372,9 @@ version = "1.10.0"
 
 [[deps.StanIO]]
 deps = ["CSV", "DataFrames", "DelimitedFiles", "DocStringExtensions", "JSON", "NamedTupleTools", "OrderedCollections", "Parameters", "Serialization", "TableOperations", "Tables", "Unicode"]
-git-tree-sha1 = "f0277f4362a6bc306a185c38f2d5381391d4e5f8"
+git-tree-sha1 = "88c0938f1eafb181dd15b4ccdcab668ddbd3c4f8"
 uuid = "a1b0710c-ff81-4c57-8075-167cfc590dd3"
-version = "0.1.0"
+version = "0.1.2"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
