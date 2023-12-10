@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.32
+# v0.19.35
 
 using Markdown
 using InteractiveUtils
@@ -8,15 +8,7 @@ using InteractiveUtils
 using Pkg
 
 # ╔═╡ ecf1f379-7774-4a41-928e-be10be1786b4
-begin
-	using StanIO
-	using DataFrames
-	using JSON
-	using NamedTupleTools
-end
-
-# ╔═╡ e953be75-6f32-4a33-bded-a809ff38e5cd
-md" ### Translation of [stanio](https://github.com/WardBrian/stanio) by Brian Ward."
+using StanIO
 
 # ╔═╡ 789c3f0b-8179-4126-baf5-fdd47b1938f5
 md" ##### Widen the cells."
@@ -60,26 +52,20 @@ convert(NamedTuple, ndf)
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
-NamedTupleTools = "d9ec5142-1e00-5aa0-9d6a-321866360f50"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 StanIO = "a1b0710c-ff81-4c57-8075-167cfc590dd3"
 
 [compat]
-DataFrames = "~1.6.1"
-JSON = "~0.21.4"
-NamedTupleTools = "~0.14.3"
-StanIO = "~0.1.2"
+StanIO = "~0.2.2"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.0-beta3"
+julia_version = "1.10.0-rc2"
 manifest_format = "2.0"
-project_hash = "d1d62ca717e9f844f26519e58389d6dba40bcbf9"
+project_hash = "14918c7d1eab24094f07941230bd4daa4b468a50"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -218,7 +204,7 @@ version = "0.6.4"
 [[deps.LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "8.0.1+1"
+version = "8.4.0+0"
 
 [[deps.LibGit2]]
 deps = ["Base64", "LibGit2_jll", "NetworkOptions", "Printf", "SHA"]
@@ -372,9 +358,9 @@ version = "1.10.0"
 
 [[deps.StanIO]]
 deps = ["CSV", "DataFrames", "DelimitedFiles", "DocStringExtensions", "JSON", "NamedTupleTools", "OrderedCollections", "Parameters", "Serialization", "TableOperations", "Tables", "Unicode"]
-git-tree-sha1 = "88c0938f1eafb181dd15b4ccdcab668ddbd3c4f8"
+git-tree-sha1 = "2173a01b9d753fab01024bd584ea9ef628fe976f"
 uuid = "a1b0710c-ff81-4c57-8075-167cfc590dd3"
-version = "0.1.2"
+version = "0.2.2"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -390,7 +376,7 @@ version = "0.3.4"
 [[deps.SuiteSparse_jll]]
 deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
 uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
-version = "7.2.0+1"
+version = "7.2.1+1"
 
 [[deps.TOML]]
 deps = ["Dates"]
@@ -478,7 +464,6 @@ version = "17.4.0+2"
 """
 
 # ╔═╡ Cell order:
-# ╟─e953be75-6f32-4a33-bded-a809ff38e5cd
 # ╟─789c3f0b-8179-4126-baf5-fdd47b1938f5
 # ╠═c08d0f35-92fb-4e10-81a6-5a68eea4d046
 # ╠═3d7c5e2c-8eba-11ee-02c7-5382f0852ca2
