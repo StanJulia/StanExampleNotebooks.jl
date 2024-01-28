@@ -3,8 +3,8 @@
   "stan_major_version" : "2",
   "stan_minor_version" : "34",
   "stan_patch_version" : "0",
-  "model_name" : "bernoulli_model",
-  "start_datetime" : "2024-01-22 02:32:46 UTC",
+  "model_name" : "bernoulli_pf_model",
+  "start_datetime" : "2024-01-28 16:03:48 UTC",
   "method" : {
     "value" : "pathfinder",
     "pathfinder" : {
@@ -16,7 +16,7 @@
       "tol_param" : 1e-08,
       "history_size" : 5,
       "num_psis_draws" : 1000,
-      "num_paths" : 6,
+      "num_paths" : 4,
       "save_single_paths" : false,
       "psis_resample" : true,
       "calculate_lp" : true,
@@ -25,20 +25,20 @@
       "num_elbo_draws" : 25
     }
   },
-  "id" : 1,
+  "id" : 3,
   "data" : {
-    "file" : "\/Users\/rob\/Projects\/Julia\/notebooks\/Stan\/Pathfinder\/tmp\/bernoulli_data_1.json"
+    "file" : "\/Users\/rob\/.julia\/dev\/StanExampleNotebooks\/notebooks\/Pathfinder\/tmp\/bernoulli_pf_data_3.json"
   },
   "init" : "2",
   "random" : {
-    "seed" : 55176064
+    "seed" : 1995513073
   },
   "output" : {
-    "file" : "\/Users\/rob\/Projects\/Julia\/notebooks\/Stan\/Pathfinder\/tmp\/bernoulli_chain_1.csv",
+    "file" : "\/Users\/rob\/.julia\/dev\/StanExampleNotebooks\/notebooks\/Pathfinder\/tmp\/bernoulli_pf_chain_3.csv",
     "diagnostic_file" : "",
     "refresh" : 100,
     "sig_figs" : -1,
-    "profile_file" : "\/Users\/rob\/Projects\/Julia\/notebooks\/Stan\/Pathfinder\/tmp\/bernoulli_profile_1.log",
+    "profile_file" : "\/Users\/rob\/.julia\/dev\/StanExampleNotebooks\/notebooks\/Pathfinder\/tmp\/bernoulli_pf_profile_3.log",
     "save_cmdstan_config" : true
   },
   "num_threads" : 1,
