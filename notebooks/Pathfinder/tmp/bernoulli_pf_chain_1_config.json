@@ -4,7 +4,7 @@
   "stan_minor_version" : "34",
   "stan_patch_version" : "0",
   "model_name" : "bernoulli_pf_model",
-  "start_datetime" : "2024-01-28 16:03:47 UTC",
+  "start_datetime" : "2024-01-29 23:52:33 UTC",
   "method" : {
     "value" : "pathfinder",
     "pathfinder" : {
@@ -15,13 +15,13 @@
       "tol_rel_grad" : 1e+07,
       "tol_param" : 1e-08,
       "history_size" : 5,
-      "num_psis_draws" : 1000,
+      "num_psis_draws" : 2000,
       "num_paths" : 4,
-      "save_single_paths" : false,
+      "save_single_paths" : true,
       "psis_resample" : true,
       "calculate_lp" : true,
       "max_lbfgs_iters" : 1000,
-      "num_draws" : 1000,
+      "num_draws" : 2000,
       "num_elbo_draws" : 25
     }
   },
@@ -31,7 +31,7 @@
   },
   "init" : "2",
   "random" : {
-    "seed" : 1995513073
+    "seed" : 10642823
   },
   "output" : {
     "file" : "\/Users\/rob\/.julia\/dev\/StanExampleNotebooks\/notebooks\/Pathfinder\/tmp\/bernoulli_pf_chain_1.csv",
