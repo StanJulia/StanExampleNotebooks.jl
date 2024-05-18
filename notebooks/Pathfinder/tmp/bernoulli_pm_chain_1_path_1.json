@@ -1,0 +1,83 @@
+
+{
+  "0" : {
+    "iter" : 0,
+    "unconstrained_parameters" : [ 1.98354 ],
+    "grads" : [ -6.5487 ]
+  },
+  "1" : {
+    "iter" : 1,
+    "unconstrained_parameters" : [ 1.98354 ],
+    "grads" : [ -6.5487 ],
+    "history_size" : 1,
+    "lbfgs_success" : true,
+    "pathfinder_success" : true,
+    "x_center" : [ 1.62724 ],
+    "logDetCholHk" : -2.91123,
+    "L_approx" : [ [ -0.0544086 ] ],
+    "Qk" : [  ],
+    "alpha" : [ 1 ],
+    "full" : true,
+    "lbfgs_note" : ""
+  },
+  "2" : {
+    "iter" : 2,
+    "unconstrained_parameters" : [ 1.32867 ],
+    "grads" : [ 5.48745 ],
+    "history_size" : 2,
+    "lbfgs_success" : true,
+    "pathfinder_success" : true,
+    "x_center" : [ -0.695982 ],
+    "logDetCholHk" : -0.498532,
+    "L_approx" : [ [ 0.607421 ] ],
+    "Qk" : [  ],
+    "alpha" : [ 0.368961 ],
+    "full" : true,
+    "lbfgs_note" : ""
+  },
+  "3" : {
+    "iter" : 3,
+    "unconstrained_parameters" : [ -0.783552 ],
+    "grads" : [ -0.237343 ],
+    "history_size" : 3,
+    "lbfgs_success" : true,
+    "pathfinder_success" : true,
+    "x_center" : [ -0.69255 ],
+    "logDetCholHk" : -0.479307,
+    "L_approx" : [ [ 0.619212 ] ],
+    "Qk" : [  ],
+    "alpha" : [ 0.383424 ],
+    "full" : true,
+    "lbfgs_note" : ""
+  },
+  "4" : {
+    "iter" : 4,
+    "unconstrained_parameters" : [ -0.730421 ],
+    "grads" : [ -0.0987708 ],
+    "history_size" : 4,
+    "lbfgs_success" : true,
+    "pathfinder_success" : true,
+    "x_center" : [ -0.693151 ],
+    "logDetCholHk" : -0.487311,
+    "L_approx" : [ [ 0.614276 ] ],
+    "Qk" : [  ],
+    "alpha" : [ 0.377335 ],
+    "full" : true,
+    "lbfgs_note" : ""
+  },
+  "5" : {
+    "iter" : 5,
+    "unconstrained_parameters" : [ -0.69255 ],
+    "grads" : [ 0.00159385 ],
+    "history_size" : 5,
+    "lbfgs_success" : true,
+    "pathfinder_success" : true,
+    "x_center" : [ -0.693147 ],
+    "logDetCholHk" : -0.490464,
+    "L_approx" : [ [ 0.612342 ] ],
+    "Qk" : [  ],
+    "alpha" : [ 0.374963 ],
+    "full" : true,
+    "lbfgs_note" : ""
+  }
+}

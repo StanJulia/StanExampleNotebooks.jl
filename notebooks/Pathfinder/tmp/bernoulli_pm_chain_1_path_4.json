@@ -1,0 +1,68 @@
+
+{
+  "0" : {
+    "iter" : 0,
+    "unconstrained_parameters" : [ 0.769907 ],
+    "grads" : [ -4.20201 ]
+  },
+  "1" : {
+    "iter" : 1,
+    "unconstrained_parameters" : [ 0.769907 ],
+    "grads" : [ -4.20201 ],
+    "history_size" : 1,
+    "lbfgs_success" : true,
+    "pathfinder_success" : true,
+    "x_center" : [ 0.526046 ],
+    "logDetCholHk" : -2.84672,
+    "L_approx" : [ [ -0.0580343 ] ],
+    "Qk" : [  ],
+    "alpha" : [ 1 ],
+    "full" : true,
+    "lbfgs_note" : ""
+  },
+  "2" : {
+    "iter" : 2,
+    "unconstrained_parameters" : [ 0.349706 ],
+    "grads" : [ 3.03855 ],
+    "history_size" : 2,
+    "lbfgs_success" : true,
+    "pathfinder_success" : true,
+    "x_center" : [ -0.688463 ],
+    "logDetCholHk" : -0.536962,
+    "L_approx" : [ [ 0.584521 ] ],
+    "Qk" : [  ],
+    "alpha" : [ 0.341665 ],
+    "full" : true,
+    "lbfgs_note" : ""
+  },
+  "3" : {
+    "iter" : 3,
+    "unconstrained_parameters" : [ -0.634735 ],
+    "grads" : [ 0.157251 ],
+    "history_size" : 3,
+    "lbfgs_success" : true,
+    "pathfinder_success" : true,
+    "x_center" : [ -0.693081 ],
+    "logDetCholHk" : -0.495725,
+    "L_approx" : [ [ 0.609129 ] ],
+    "Qk" : [  ],
+    "alpha" : [ 0.371038 ],
+    "full" : true,
+    "lbfgs_note" : ""
+  },
+  "4" : {
+    "iter" : 4,
+    "unconstrained_parameters" : [ -0.686169 ],
+    "grads" : [ 0.0186303 ],
+    "history_size" : 4,
+    "lbfgs_success" : true,
+    "pathfinder_success" : true,
+    "x_center" : [ -0.693147 ],
+    "logDetCholHk" : -0.491,
+    "L_approx" : [ [ 0.612014 ] ],
+    "Qk" : [  ],
+    "alpha" : [ 0.374561 ],
+    "full" : true,
+    "lbfgs_note" : ""
+  }
+}
